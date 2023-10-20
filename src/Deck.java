@@ -20,5 +20,6 @@ public class Deck {
         int numWildDraw = 0; // max is 4
         String[] allColours = {"Red", "Blue", "Yellow", "Green"};
         String[] allTypes = {"Draw", "Skip", "Reverse", "Wild", "Wild Draw", "Flip"};
+        //my plan here is to make a random deck of 112 cards
     }
 }// type something here if you can edit this
