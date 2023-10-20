@@ -7,8 +7,8 @@ public class Deck {
         deck = new ArrayList<Card>();
         createDeck();
     }
-
-    private void createDeck() {
+    // not yet complete
+    private void createDeck() { 
         int numCards = 0; //max is 112
         int numColour = 0; //max is 25
         int numZerosPerColour = 0; //max is 1 per colour
@@ -21,4 +21,4 @@ public class Deck {
         String[] allColours = {"Red", "Blue", "Yellow", "Green"};
         String[] allTypes = {"Draw", "Skip", "Reverse", "Wild", "Wild Draw", "Flip"};
     }
-}
+}// type something here if you can edit this
