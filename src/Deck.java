@@ -18,7 +18,7 @@ public class Deck {
         allTypes.put("Skip", 2);
         allTypes.put("Reverse", 2);
         allTypes.put("Flip", 2);
-        // loop through each colour
+        // loop through each colour, i is the index of the allColours list
         for (int i = 0; i < 4; i++) {
             // adding numbers 1 through 9 for each colour
             for (int j = 1; j < 10; j++) {
@@ -39,8 +39,18 @@ public class Deck {
             deck.add(new Card("Wild"));
             deck.add(new Card("Wild", "Wild Draw"));
         }
-        //shuffle the deck
+    }
+
+    public void shuffleDeck() {
         Collections.shuffle(deck);
+    }
+
+    public Card drawCard() {
+        if (!deck.isEmpty()) {
+            return deck.remove(0);
+        } else {
+            return null;
+        }
     }
     public void printDeck() {
         for (Card card : deck) {
