@@ -12,13 +12,11 @@ public class Deck {
 
     private void createDeck() {
         String[] allColours = {"Red", "Blue", "Yellow", "Green"};
-        //These are all the types of cards except for numbered, along with the amount per colour
+        //These are all the types of cards except for numbered and wilds, along with the amount per colour
         HashMap<String, Integer> allTypes = new HashMap<>();
         allTypes.put("Draw", 2);
         allTypes.put("Skip", 2);
         allTypes.put("Reverse", 2);
-        allTypes.put("Wild", 4);
-        allTypes.put("Wild Draw", 4);
         allTypes.put("Flip", 2);
         // loop through each colour
         for (int i = 0; i < 4; i++) {
@@ -32,11 +30,9 @@ public class Deck {
             //adding draw, skip, reverse, and flip
             for (String type : allTypes.keySet()) {
                 int maxOccurence = allTypes.get(type);
-                if (!(type.equals("Wild Draw") || type.equals("Wild"))) {
-                    for (int h = 0; h < maxOccurence; h++) {
-                        Card card = new Card(allColours[i], type);
-                        deck.add(card);
-                    }
+                for (int h = 0; h < maxOccurence; h++) {
+                    Card card = new Card(allColours[i], type);
+                    deck.add(card);
                 }
             }
             // adding wild and wild draw
@@ -52,4 +48,3 @@ public class Deck {
         }
     }
 }
-
