@@ -1,7 +1,26 @@
+/**
+ * Represents a playing card in the Uno game.
+ */
+
 public class Card {
+    /**
+     * Enumeration of card ranks.
+     */
     public enum Rank {DEUCE, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, SKIP, REVERSE, WILD, DRAW2, DRAW4}
+
+    /**
+     * Enumeration of card suits.
+     */
     public enum Suit {RED,YELLOW,BLUE,GREEN}
 
+
+    /**
+     * Gets the Rank enum value corresponding to the given abbreviation character.
+     *
+     * @param c The abbreviation character.
+     * @return The Rank enum value.
+     * @throws IllegalArgumentException If the abbreviation is invalid.
+     */
     public static Rank getRankFromAbbrev(char c) {
         //using char instead of String to avoid using switch with strings (unavailable on early java)
 
@@ -24,6 +43,13 @@ public class Card {
         }
     }
 
+    /**
+     * Gets the Suit enum value corresponding to the given abbreviation character.
+     *
+     * @param c The abbreviation character.
+     * @return The Suit enum value.
+     * @throws IllegalArgumentException If the abbreviation is invalid.
+     */
     public static Suit getSuitFromAbbrev(char c) {
         switch (c) {
             case 'C': return Suit.RED;
@@ -36,23 +62,52 @@ public class Card {
     private final Rank rank;
     private final Suit suit;
 
+
+    /**
+     * Constructs a Card instance based on the provided abbreviation string.
+     *
+     * @param s The abbreviation string.
+     */
     public Card(String s) {
         this(getRankFromAbbrev(s.charAt(0)), getSuitFromAbbrev(s.charAt(1)));
     }
 
+    /**
+     * Constructs a Card instance with the specified rank and suit.
+     *
+     * @param r The rank of the card.
+     * @param s The suit of the card.
+     */
     public Card(Rank r, Suit s) {
         rank = r;
         suit = s;
     }
 
+
+    /**
+     * Gets the rank of the card.
+     *
+     * @return The rank enum value.
+     */
     public Rank getRank() {
         return rank;
     }
 
+    /**
+     * Gets the suit of the card.
+     *
+     * @return The suit enum value.
+     */
     public Suit getSuit() {
         return suit;
     }
 
+
+    /**
+     * Returns a string representation of the card.
+     *
+     * @return A string representing the rank and suit of the card.
+     */
     @Override
     public String toString() {
         return rank + " of " + suit;
