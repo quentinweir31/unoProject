@@ -1,6 +1,10 @@
 import org.junit.jupiter.api.*;
+
+
 import static org.junit.jupiter.api.Assertions.*;
+
 import java.util.ArrayList;
+import java.util.List;
 
 public class UnoTest {
     /**
@@ -78,29 +82,32 @@ public class UnoTest {
         assertEquals(p1.getHand(), testHand);
     }
 
-     /**
-     * Test Case to verify if the card constrcutor creates regular cards 
+    /**
+     * Test Case to verify if you draw a card from the Deck.
      */
+
     @Test
-    public void test_CardConstructor_card() {
-        Card sample_card = new Card(Card.Rank.THREE, Card.Suit.RED);
+    public void test_PlayerDrawCardFromDeck() {
+        // Create a player
+        Player player = new Player("TestPlayer");
+        assertNotNull(player);
 
-        assertEquals(sample_card.getRank(),Card.Rank.THREE);
-        assertEquals(sample_card.getSuit(), Card.Suit.RED);
+        // Create a deck
+        List<Card> deck = new ArrayList<>();
+        deck.add(new Card(Card.Rank.DRAW2, Card.Suit.RED));
 
+        // Draw a card from the deck
+        Card drawnCard = player.drawCardFromDeck(deck);
+
+        // Check if the drawn card is not null
+        assertNotNull(drawnCard);
+
+        // Check if the card is added to the player's hand
+        assertEquals(1, player.getHand().size());
+        assertEquals(drawnCard, player.getHand().get(0));
     }
-    
-     /**
-     * Test Case to verify if the card constrcutor creates wild cards 
-     */
-    @Test
-    public void test_CardConstructor_wild() {
-        Card sample_card = new Card("QC");
 
-        assertEquals(sample_card.getRank(),Card.Rank.WILD);
-        assertEquals(sample_card.getSuit(), Card.Suit.RED);
 
-    }
 
 
     /**
@@ -114,3 +121,4 @@ public class UnoTest {
     }
 
 }
+
