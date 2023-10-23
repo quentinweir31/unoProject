@@ -99,6 +99,16 @@ public class Player {
                     selectedCard = new Card(Card.Rank.WILD, Card.getSuitFromAbbrev(chosenColor));
                 }
 
+                // Handle the DRAW2 card
+                if (selectedCard.getRank() == Card.Rank.DRAW2 || topCard.getRank() == Card.Rank.DRAW2) {
+                    System.out.println(name + " plays DRAW2! The next player must draw 2 cards.");
+
+                    // Draw two cards for the next player
+                    game.drawTwoForNextPlayer(deck);
+
+                    return selectedCard;
+                }
+
                 if (selectedCard.getRank() == Card.Rank.SKIP || topCard.getRank() == Card.Rank.SKIP) {
                     System.out.println(name + " plays SKIP! Turn is skipped.");
                     return selectedCard;
