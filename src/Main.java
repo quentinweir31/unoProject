@@ -5,6 +5,9 @@ import java.util.Scanner;
 
 public class Main {
     private static boolean isClockwise = true;  // Direction of play
+
+    private static int currentPlayerIndex = 0;
+    private static List<Player> players;
     private static Main instance;  // Static field to hold the instance
 
     public static void main(String[] args) {
@@ -15,7 +18,7 @@ public class Main {
         instance = new Main();
 
         // Create players
-        List<Player> players = createPlayers(numberOfPlayers, createDeck());
+        players = createPlayers(numberOfPlayers, createDeck());
 
         for (Player player : players) {
             player.setGameReference(instance);
@@ -124,4 +127,27 @@ public class Main {
 
         return deck;
     }
+
+    public static void moveToNextPlayer() {
+        if (isClockwise) {
+            currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
+        } else {
+            currentPlayerIndex = (currentPlayerIndex - 1 + players.size()) % players.size();
+        }
+    }
+
+    public static Player getCurrentPlayer() {
+        return players.get(currentPlayerIndex);
+    }
+    public void drawTwoForNextPlayer(List<Card> deck) {
+        // Move to the next player
+        moveToNextPlayer();
+
+        // Draw two cards for the next player
+        Player nextPlayer = getCurrentPlayer();
+        nextPlayer.drawCardFromDeck(deck);
+        nextPlayer.drawCardFromDeck(deck);
+    }
+
+
 }
