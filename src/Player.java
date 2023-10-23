@@ -3,6 +3,10 @@ import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 
+
+/**
+ * Represents a player in the Uno game.
+ */
 public class Player {
     private String name;
     private List<Card> hand;
@@ -12,7 +16,11 @@ public class Player {
     private Main game;
 
 
-
+    /**
+     * Constructor for creating a player with a given name.
+     *
+     * @param name The name of the player.
+     */
     public Player(String name) {
         this.name = name;
         this.hand = new ArrayList<>();
@@ -21,19 +29,38 @@ public class Player {
 
     }
 
-
+    /**
+     * Gets the name of the player.
+     *
+     * @return The name of the player.
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Gets the hand of the player.
+     *
+     * @return The list of cards in the player's hand.
+     */
     public List<Card> getHand() {
         return hand;
     }
 
+    /**
+     * Adds a card to the player's hand.
+     *
+     * @param card The card to add to the hand.
+     */
     public void addToHand(Card card) {
         hand.add(card);
     }
 
+    /**
+     * Removes a card from the player's hand at the specified index.
+     *
+     * @param index The index of the card to remove.
+     */
     public void removeFromHand(int index) {
         hand.remove(index);
     }
@@ -43,7 +70,12 @@ public class Player {
         addToHand(card);
     }
 
-    // Simulate drawing a card from the deck
+    /**
+     * Simulates drawing a card from the deck and adds it to the player's hand.
+     *
+     * @param deck The deck of cards to draw from.
+     * @return The drawn card.
+     */
     public Card drawCardFromDeck(List<Card> deck) {
         if (!deck.isEmpty()) {
             Card drawnCard = deck.remove(0);
@@ -56,12 +88,19 @@ public class Player {
         }
     }
 
-    // Simulate playing a card
+    /**
+     * Simulates playing a card from the player's hand.
+     *
+     * @param index The index of the card to play.
+     * @return The played card.
+     */
     public Card playCard(int index) {
         return hand.get(index);
     }
 
-    // Display the player's hand
+    /**
+     * Displays the cards in the player's hand.
+     */
     public void displayHand() {
         System.out.println(name + "'s Hand:");
         for (int i = 0; i < hand.size(); i++) {
@@ -69,7 +108,13 @@ public class Player {
         }
     }
 
-    // Simulate a player's turn
+    /**
+     * Simulates a player's turn in the Uno game.
+     *
+     * @param deck    The deck of cards.
+     * @param topCard The top card on the discard pile.
+     * @return The card played or drawn.
+     */
     public Card takeTurn(List<Card> deck, Card topCard) {
         System.out.println(name + "'s Turn.");
         System.out.println("Current side: " + topCard.getSuit());
@@ -142,10 +187,21 @@ public class Player {
     }
 
 
+    /**
+     * Sets the game reference for the player.
+     *
+     * @param game The Main instance representing the Uno game.
+     */
     public void setGameReference(Main game) {
         this.game = game;
     }
-    // Check if the selected card is a valid play
+    /**
+     * Checks if the selected card is a valid play based on the top card.
+     *
+     * @param selectedCard The card selected to play.
+     * @param topCard      The top card on the discard pile.
+     * @return True if the play is valid, false otherwise.
+     */
     private boolean isValidPlay(Card selectedCard, Card topCard) {
         return selectedCard.getRank() == topCard.getRank() || selectedCard.getSuit() == topCard.getSuit();
     }
