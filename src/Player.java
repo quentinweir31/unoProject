@@ -138,3 +138,5 @@ public class Player {
     // Check if the selected card is a valid play
     private boolean isValidPlay(Card selectedCard, Card topCard) {
         return selectedCard.getRank() == topCard.getRank() || selectedCard.getSuit() == topCard.getSuit();
+    }
+    }
