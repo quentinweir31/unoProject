@@ -3,6 +3,25 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ *
+ * Milestone #1
+ *
+ * --Authors--
+ * Jonas Hallgrimsson 101223596
+ * Jawad Mohammed 101233031
+ * Quentin Weir 101234808
+ * Omar Hamzat 101244220
+ *
+ * Version 1.0
+ * Oct 22nd 2023
+ *
+ */
+
+/**
+ * The main class for simulating the Uno game.
+ */
+
 public class Main {
     private static boolean isClockwise = true;  // Direction of play
 
@@ -10,6 +29,12 @@ public class Main {
     private static List<Player> players;
     private static Main instance;  // Static field to hold the instance
 
+
+    /**
+     * The main method to start the Uno game.
+     *
+     * @param args Command line arguments (not used).
+     */
     public static void main(String[] args) {
         // Get the number of players from the user
         int numberOfPlayers = askNumberOfPlayers();
@@ -28,6 +53,11 @@ public class Main {
         instance.simulateGame(players, createDeck());
     }
 
+    /**
+     * Asks the user to input the number of players for the Uno game.
+     *
+     * @return The number of players.
+     */
     private static int askNumberOfPlayers() {
         Scanner scanner = new Scanner(System.in);
 
@@ -43,7 +73,15 @@ public class Main {
         return numberOfPlayers;
     }
 
-    private static List<Player> createPlayers(int numberOfPlayers, List<Card> deck) {
+
+    /**
+     * Creates a list of players for the Uno game.
+     *
+     * @param numberOfPlayers The number of players to create.
+     * @param deck             The deck of cards to distribute among players.
+     * @return A list of created players.
+     */
+    static List<Player> createPlayers(int numberOfPlayers, List<Card> deck) {
         List<Player> players = new ArrayList<>();
 
         for (int i = 1; i <= numberOfPlayers; i++) {
@@ -69,6 +107,13 @@ public class Main {
         return players;
     }
 
+
+    /**
+     * Simulates the Uno game.
+     *
+     * @param players The list of players participating in the game.
+     * @param deck    The deck of cards for the game.
+     */
     private static void simulateGame(List<Player> players, List<Card> deck) {
         int currentPlayerIndex = 0;
         List<Card> discardPile = new ArrayList<>();
@@ -100,6 +145,14 @@ public class Main {
         }
     }
 
+    /**
+     * Calculates the index of the next player based on the direction of play.
+     *
+     * @param currentIndex The index of the current player.
+     * @param numPlayers   The total number of players.
+     * @return The index of the next player.
+     */
+
     private static int getNextPlayerIndex(int currentIndex, int numPlayers) {
         if (isClockwise) {
             return (currentIndex + 1) % numPlayers;
@@ -108,11 +161,20 @@ public class Main {
         }
     }
 
+    /**
+     * Reverses the direction of play in the Uno game.
+     */
     public void reverseDirection() {
         isClockwise = !isClockwise;
         System.out.println("Direction reversed.");
     }
 
+
+    /**
+     * Creates a shuffled deck of Uno cards.
+     *
+     * @return A list representing the shuffled deck of Uno cards.
+     */
     private static List<Card> createDeck() {
         List<Card> deck = new ArrayList<>();
 
@@ -128,6 +190,10 @@ public class Main {
         return deck;
     }
 
+
+    /**
+     * Moves to the next player in the Uno game.
+     */
     public static void moveToNextPlayer() {
         if (isClockwise) {
             currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
@@ -136,9 +202,20 @@ public class Main {
         }
     }
 
+    /**
+     * Gets the current player in the Uno game.
+     *
+     * @return The current player.
+     */
     public static Player getCurrentPlayer() {
         return players.get(currentPlayerIndex);
     }
+
+    /**
+     * Draws two cards for the next player in the Uno game.
+     *
+     * @param deck The deck of cards for drawing.
+     */
     public void drawTwoForNextPlayer(List<Card> deck) {
         // Move to the next player
         moveToNextPlayer();
