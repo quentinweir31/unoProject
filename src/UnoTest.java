@@ -1,5 +1,6 @@
 import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
+import java.util.ArrayList;
 
 public class UnoTest {
     /**
@@ -22,6 +23,10 @@ public class UnoTest {
      */
     @Test
     public void test_PlayerConstructor() {
+        Player p1 = new Player("Test_Player");
+        ArrayList testHand = new ArrayList<>();
+        assertEquals(p1.getName(), "Test_Player");
+        assertEquals(p1.getHand(), testHand);
     }
 
     
@@ -32,16 +37,26 @@ public class UnoTest {
     public void test_PlayerHandActions() {
         //Testing add to hand, remove from hand/ draw car
         //by creatign a hand, card and deck, and calling the add/remove draw methods
+
+        Player p1 = new Player("Test_Player");
+        
+        //Creating a sample hand to test against
+        Card sample_card = new Card(Card.Rank.FIVE, Card.Suit.YELLOW);
+        ArrayList<Card> testHand = new ArrayList<Card>();
+        
+        
+        //adding a card to both the player's hand and the test, verifying that the card is added 
+        testHand.add(sample_card);
+        p1.addToHand(sample_card); 
+        assertEquals(p1.getHand().get(0), testHand.get(0));
+
+        //removing the added card and verifying that the hands are empty 
+        p1.removeFromHand(0);
+        testHand.remove(sample_card);
+        assertEquals(p1.getHand(), testHand);
+
     }
 
-
-    /**
-     * Test Case to verify player can draw a card from the deck
-     */
-    @Test
-    public void test_PlayerDrawfromDeck() {
-        //create a deck, a use an empty hand and draw a card into it
-    }
 
     /**
      * Test Case to verify the display Hand method works appropriralety 
@@ -49,13 +64,18 @@ public class UnoTest {
     @Test
     public void test_PlayerDisplayHand() {
         //create a player with a hand and display it, assert if the values are correct
-    }
-    /**
-     * Test Case to simulate the player taking a turn 
-     */
-    @Test
-    public void test_PlayerTakeTurn() {
-        //simulate play
+        Player p1 = new Player("Test_Player");
+        
+        //Creating a sample hand to test against
+        Card sample_card = new Card(Card.Rank.FIVE, Card.Suit.YELLOW);
+        ArrayList<Card> testHand = new ArrayList<Card>();
+        
+        
+        //adding a card to both the player's hand and the test, verifying that the card is added 
+        testHand.add(sample_card);
+        p1.addToHand(sample_card); 
+        p1.displayHand();
+        assertEquals(p1.getHand(), testHand);
     }
 
      /**
@@ -63,6 +83,11 @@ public class UnoTest {
      */
     @Test
     public void test_CardConstructor_card() {
+        Card sample_card = new Card(Card.Rank.THREE, Card.Suit.RED);
+
+        assertEquals(sample_card.getRank(),Card.Rank.THREE);
+        assertEquals(sample_card.getSuit(), Card.Suit.RED);
+
     }
     
      /**
@@ -70,28 +95,13 @@ public class UnoTest {
      */
     @Test
     public void test_CardConstructor_wild() {
+        Card sample_card = new Card("QC");
+
+        assertEquals(sample_card.getRank(),Card.Rank.WILD);
+        assertEquals(sample_card.getSuit(), Card.Suit.RED);
+
     }
 
-     /**
-     * Test Case to verify the creation of a deck
-     */
-    @Test
-    public void test_DeckConstructor() {
-    }
-    
-     /**
-     * Test Case to verify the DeckShuffle method shuffles the deck
-     */
-    @Test
-    public void test_DeckShuffle() {
-    }
-
-    /**
-     * Test Case to verify if the printDeck method prints the deck correctly
-     */
-    @Test
-    public void test_DeckPrintDeck() {
-    }
 
     /**
      * This method is executed once after all the test methods.
