@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UnoTest {
-    /**
+    /**a
      * Default constructor for the UnoTest class.
      */
     public UnoTest() {
@@ -107,6 +107,68 @@ public class UnoTest {
         assertEquals(drawnCard, player.getHand().get(0));
     }
 
+    /**
+     * Test Case to verify if the system draws a card from the Deck.
+     */
+    @Test
+    public void test_DrawCardFromDeck() {
+        Player player = new Player("TestPlayer");
+        assertNotNull(player);
+
+        List<Card> deck = new ArrayList<>();
+        deck.add(new Card(Card.Rank.DRAW2, Card.Suit.RED));
+
+        Card drawnCard = player.drawCardFromDeck(deck);
+
+        assertNotNull(drawnCard);
+        assertEquals(1, player.getHand().size());
+        assertEquals(drawnCard, player.getHand().get(0));
+    }
+
+    /**
+     * Test Case to verify if it's a valid play with a matching rank
+     */
+
+    @Test
+    public void test_IsValidPlayWithMatchingRank() {
+        Player player = new Player("TestPlayer");
+
+        Card selectedCard = new Card(Card.Rank.DRAW2, Card.Suit.RED);
+        Card topCard = new Card(Card.Rank.DRAW2, Card.Suit.BLUE);
+
+        assertTrue(player.isValidPlay(selectedCard, topCard));
+    }
+
+
+    /**
+     * Test Case to verify if it's a valid play with a matching suit
+     */
+    @Test
+    public void test_IsValidPlayWithMatchingSuit() {
+        Player player = new Player("TestPlayer");
+
+        Card selectedCard = new Card(Card.Rank.DRAW2, Card.Suit.RED);
+        Card topCard = new Card(Card.Rank.SKIP, Card.Suit.RED);
+
+        assertTrue(player.isValidPlay(selectedCard, topCard));
+    }
+
+    /**
+     * Test Case to verify if it's a valid play with a mismatched rank and suit
+     */
+
+    @Test
+    public void test_IsValidPlayWithMismatchedRankAndSuit() {
+        Player player = new Player("TestPlayer");
+
+        Card selectedCard = new Card(Card.Rank.DRAW2, Card.Suit.RED);
+        Card topCard = new Card(Card.Rank.SKIP, Card.Suit.BLUE);
+
+        assertFalse(player.isValidPlay(selectedCard, topCard));
+    }
+
+
+
 
 
 
@@ -121,4 +183,3 @@ public class UnoTest {
     }
 
 }
-
