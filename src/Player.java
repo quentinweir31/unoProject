@@ -1,7 +1,4 @@
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.Scanner;
+import java.util.*;
 
 
 /**
@@ -195,6 +192,7 @@ public class Player {
     public void setGameReference(Main game) {
         this.game = game;
     }
+    
     /**
      * Checks if the selected card is a valid play based on the top card.
      *
@@ -202,7 +200,27 @@ public class Player {
      * @param topCard      The top card on the discard pile.
      * @return True if the play is valid, false otherwise.
      */
-    private boolean isValidPlay(Card selectedCard, Card topCard) {
+    public boolean isValidPlay(Card selectedCard, Card topCard) {
         return selectedCard.getRank() == topCard.getRank() || selectedCard.getSuit() == topCard.getSuit();
     }
+    
+    /**
+     * Updates the wild card after the user has chosen a colour
+     * 
+     * @param originalCard The card to be updated
+     * @parem updatedCard The new card that will replace the original wild card
+     */
+    public void updateWildCardInHand(Card originalCard, Card updatedCard) {
+        //loops through each card using an iterator looking for the originalCard parameter
+        //once the original card is found, it is replace by the updatedCard parameter
+        Iterator<Card> iter = hand.iterator();
+        while (iter.hasNext()) {
+            Card card = iter.next();
+            if (card == originalCard) {
+                iter.remove();
+                hand.add(updatedCard);
+                return;
+            }
+        }
     }
+}
