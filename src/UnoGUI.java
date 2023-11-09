@@ -3,14 +3,18 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.ConcurrentModificationException;
 import java.util.List;
+import javax.swing.JOptionPane;
 
 public class UnoGUI extends JFrame {
     private List<Player> players;
     private Player currentPlayer;
     private List<Card> deck;
     private Card topCard;
+
+    private int currentPlayerIndex = 0;
 
     private JPanel playerHandPanel;
     private JLabel topCardLabel;
@@ -50,8 +54,7 @@ public class UnoGUI extends JFrame {
     }
 
     private void shuffleDeck(List<Card> deck) {
-        // Implement the logic to shuffle the deck
-        // ...
+        Collections.shuffle(deck);
     }
 
     private void setupPlayerRange() {
@@ -95,6 +98,8 @@ public class UnoGUI extends JFrame {
         updateCardVisibility();
         updateCurrentPlayerLabel();
 
+        shuffleDeck(deck);
+
         // Distribute initial cards to players
         for (Player player : players) {
             for (int i = 0; i < 7; i++) {  // Distribute 7 cards to each player
@@ -128,15 +133,96 @@ public class UnoGUI extends JFrame {
         if (currentPlayer!= null) {
             int currentIndex = players.indexOf(currentPlayer);
             int nextIndex = (currentIndex + 1) % players.size();
-            currentPlayer = players.get(nextIndex);
+            currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
+            currentPlayer = players.get(currentPlayerIndex);
             updateCurrentPlayerLabel();
         }
     }
 
     private void handleSpecialCards(Card topCard) {
-        // Implement the logic to handle special cards at the beginning of the game
-        // For example, handle WILD cards or DRAW2 cards
+        if (topCard.getRank() == Card.Rank.WILD) {
+            System.out.println("Special card detected: WILD");
+
+            // Prompt the user to choose a color using a GUI dialog
+            char chosenColor = promptForColorGUI();
+
+            // Update the suit of the WILD card
+            topCard.setSuit(chosenColor);
+
+            System.out.println("Top card after handling WILD: " + topCard);
+        } else if (topCard.getRank() == Card.Rank.DRAW2) {
+            System.out.println("Special card detected: DRAW2");
+
+            // Simulate the logic for DRAW2 cards (you might want to implement specific rules)
+            System.out.println("The next player must draw 2 cards.");
+
+            // Additional logic for handling DRAW2 cards can be added here
+        }
+
+        // Add logic to handle other special cards if needed
+
+        // Set the updated top card after handling special cards
+        this.topCard = topCard;
+    }
+
+    private void handleCardButtonClick(Card selectedCard) {
+        if (selectedCard.getRank() == Card.Rank.WILD) {
+            // If the selected card is a Wild Card, handle it separately
+            handleWildCardFromHand(selectedCard);
+        } else if (currentPlayer.isValidPlay(selectedCard, topCard)) {
+            // Replace the top card with the selected card
+            topCard = selectedCard;
+
+            // Remove the selected card from the player's hand
+            currentPlayer.removeFromHand(currentPlayer.getHand().indexOf(selectedCard));
+
+            // Continue with the game logic or any other actions needed
+            // ...
+
+            // Move to the next player and update card visibility
+            moveToNextPlayer();
+            updateCardVisibility();
+        } else {
+            // Invalid play, notify the player or take appropriate action
+            System.out.println("Invalid play. The selected card cannot be played.");
+        }
+    }
+
+    private void handleWildCardFromHand(Card wildCard) {
+        // Prompt the user to choose a color using a GUI dialog
+        char chosenColor = promptForColorGUI();
+
+        // Update the suit of the WILD card
+        wildCard.setSuit(chosenColor);
+        Card updatedWildCard = new Card(Card.Rank.WILD, Card.getSuitFromAbbrev(chosenColor));
+
+        currentPlayer.updateWildCardInHand(wildCard, updatedWildCard);
+
+        // Continue with the game logic or any other actions needed
         // ...
+
+        // Move to the next player and update card visibility
+        moveToNextPlayer();
+        updateCardVisibility();
+    }
+    private char promptForColorGUI() {
+        // Implement the GUI prompt for choosing a color
+        // You can use a JOptionPane or other GUI components for this
+        // For simplicity, let's use a JOptionPane input dialog
+
+        String[] options = {"RED", "YELLOW", "BLUE", "GREEN"};
+        int choice = JOptionPane.showOptionDialog(
+                this,
+                "Choose a color for the WILD card:",
+                "WILD Card Color",
+                JOptionPane.DEFAULT_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                options,
+                options[0]);
+
+        // Convert the choice to the corresponding color abbreviation
+        return "CDHS".charAt(choice);
     }
 
     // Example of a method to handle playing a card
@@ -183,8 +269,7 @@ public class UnoGUI extends JFrame {
             cardButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    // Implement the logic to handle card button click
-                    // ...
+                    handleCardButtonClick(card);
                 }
             });
         }
@@ -230,8 +315,7 @@ public class UnoGUI extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 drawCard();
-                // Implement the logic to handle draw card button click
-                // ...
+
             }
         });
 
@@ -240,8 +324,7 @@ public class UnoGUI extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 moveToNextPlayer();
                 updateCardVisibility();
-                // Implement the logic to handle next player button click
-                // ...
+
             }
         });
 
@@ -270,8 +353,13 @@ public class UnoGUI extends JFrame {
     }
 
     private void updateCurrentPlayerLabel() {
-        currentPlayerLabel.setText("Current Player: ");
+        if (currentPlayer != null) {
+            currentPlayerLabel.setText("Current Player: " + currentPlayer.getName());
+        } else {
+            currentPlayerLabel.setText("Current Player: None");
+        }
     }
+
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
