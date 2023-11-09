@@ -3,6 +3,8 @@
  */
 
 public class Card {
+
+
     /**
      * Enumeration of card ranks.
      */
@@ -102,6 +104,11 @@ public class Card {
         return suit;
     }
 
+    public void setSuit(char chosenColor) {
+
+    }
+
+
 
     /**
      * Returns a string representation of the card.
@@ -114,4 +121,5 @@ public class Card {
     }
 
 }
+
 
