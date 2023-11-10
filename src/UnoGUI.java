@@ -13,9 +13,9 @@ public class UnoGUI extends JFrame {
     private Player currentPlayer;
     private List<Card> deck;
     private Card topCard;
-
+    private int playerCount = 0;
+    private volatile Boolean numPlayersSelected = false;
     private int currentPlayerIndex = 0;
-
     private JPanel playerHandPanel;
     private JLabel topCardLabel;
     private JLabel currentPlayerLabel;
@@ -32,9 +32,7 @@ public class UnoGUI extends JFrame {
 
         setupPlayerRange();
         setupCardVisibility();
-        setupGUIComponents();
 
-        pack();
         setLocationRelativeTo(null);
         setVisible(true);
     }
@@ -58,27 +56,77 @@ public class UnoGUI extends JFrame {
     }
 
     private void setupPlayerRange() {
-        JTextField playerCountField = new JTextField();
-        JButton startButton = new JButton("Start Game");
+        JMenuBar menuBar = new JMenuBar();
+        JMenu dropDown = new JMenu("Select number of players");
+        JMenuItem twoPlayer = new JMenuItem("2");
+        JMenuItem threePlayer = new JMenuItem("3");
+        JMenuItem fourPlayer = new JMenuItem("4");
+        dropDown.add(twoPlayer);
+        dropDown.add(threePlayer);
+        dropDown.add(fourPlayer);
+        menuBar.add(dropDown);
+        twoPlayer.setPreferredSize(menuBar.getPreferredSize());
+        threePlayer.setPreferredSize(menuBar.getPreferredSize());
+        fourPlayer.setPreferredSize(menuBar.getPreferredSize());
 
+        twoPlayer.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String selectedNumber = ((JMenuItem) e.getSource()).getText();
+                playerCount = Integer.parseInt(selectedNumber);
+                numPlayersSelected = true;
+                dropDown.setText(playerCount + " Players");
+            }
+        });
+        threePlayer.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String selectedNumber = ((JMenuItem) e.getSource()).getText();
+                playerCount = Integer.parseInt(selectedNumber);
+                numPlayersSelected = true;
+                dropDown.setText(playerCount + " Players");
+            }
+        });
+        fourPlayer.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String selectedNumber = ((JMenuItem) e.getSource()).getText();
+                playerCount = Integer.parseInt(selectedNumber);
+                numPlayersSelected = true;
+                dropDown.setText(playerCount + " Players");
+            }
+        });
+
+        JButton startButton = new JButton("Start Game");
+        JButton closeButton = new JButton("Close");
         JPanel playerRangePanel = new JPanel();
-        playerRangePanel.setLayout(new GridLayout(3, 1));
-        playerRangePanel.add(new JLabel("Enter the number of players:"));
-        playerRangePanel.add(playerCountField);
+        playerRangePanel.setLayout(new FlowLayout());
+        playerRangePanel.add(menuBar);
         playerRangePanel.add(startButton);
+        playerRangePanel.add(closeButton);
 
         add(playerRangePanel, BorderLayout.NORTH);
-
+        setSize(400, 150);
+        setResizable(false);
         startButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int playerCount = Integer.parseInt(playerCountField.getText());
-                initializePlayers(playerCount);
-                startGame();
+                if (numPlayersSelected) {
+                    setupGUIComponents();
+                    initializePlayers(playerCount);
+                    startGame();
 
-                playerCountField.setEnabled(false);
-                startButton.setEnabled(false);
-                playerRangePanel.setVisible(false);
+                    menuBar.setEnabled(false);
+                    startButton.setEnabled(false);
+                    playerRangePanel.setVisible(false);
+                    setResizable(true);
+                }
+            }
+        });
+        closeButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.exit(0);
             }
         });
     }
@@ -329,7 +377,6 @@ public class UnoGUI extends JFrame {
         });
 
         updateCurrentPlayerLabel();
-
     }
 
     private void drawCard() {
