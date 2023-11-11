@@ -105,7 +105,7 @@ public class UnoGUI extends JFrame {
         playerRangePanel.add(startButton);
         playerRangePanel.add(closeButton);
 
-        add(playerRangePanel, BorderLayout.NORTH);
+        add(playerRangePanel, BorderLayout.WEST);
         setSize(400, 150);
         setResizable(false);
         startButton.addActionListener(new ActionListener() {
@@ -120,6 +120,7 @@ public class UnoGUI extends JFrame {
                     startButton.setEnabled(false);
                     playerRangePanel.setVisible(false);
                     setResizable(true);
+                    setSize(1500, 1000);
                 }
             }
         });
@@ -290,13 +291,12 @@ public class UnoGUI extends JFrame {
         topCardLabel = new JLabel();
         currentPlayerLabel = new JLabel();
 
-        JPanel southPanel = new JPanel();
-        southPanel.setLayout(new GridLayout(2, 1));
-        southPanel.add(topCardLabel);
-        southPanel.add(currentPlayerLabel);
-
+        add(currentPlayerLabel, BorderLayout.NORTH);
         add(playerHandPanel, BorderLayout.CENTER);
-        add(southPanel, BorderLayout.SOUTH);
+        add(topCardLabel, BorderLayout.SOUTH);
+
+        currentPlayerLabel.setHorizontalAlignment(JLabel.CENTER);
+        topCardLabel.setHorizontalAlignment(JLabel.CENTER);
     }
 
     private void updateCardVisibility() {
@@ -308,11 +308,16 @@ public class UnoGUI extends JFrame {
 
     private void displayPlayerHand() {
         playerHandPanel.removeAll();
-        playerHandPanel.setLayout(new FlowLayout());
+        playerHandPanel.setLayout(new GridLayout(3, 1));
+        playerHandPanel.add(new JPanel());
+        JPanel centerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        playerHandPanel.add(centerPanel);
 
         for (Card card : currentPlayer.getHand()) {
             JButton cardButton = new JButton(card.toString());
-            playerHandPanel.add(cardButton);
+            Dimension buttonSize = new Dimension(150, 250); // Adjust the size as needed
+            cardButton.setPreferredSize(buttonSize);
+            centerPanel.add(cardButton);
 
             cardButton.addActionListener(new ActionListener() {
                 @Override
@@ -344,13 +349,11 @@ public class UnoGUI extends JFrame {
         buttonPanel.add(drawCardButton);
         buttonPanel.add(nextPlayerButton);
 
-        JPanel southPanel = new JPanel();
-        southPanel.add(currentPlayerLabel);
-        southPanel.add(topCardLabel);
-        add(southPanel, BorderLayout.SOUTH);
-
-
+        add(currentPlayerLabel, BorderLayout.NORTH);
+        add(topCardLabel, BorderLayout.SOUTH);
         add(buttonPanel, BorderLayout.EAST);
+        currentPlayerLabel.setHorizontalAlignment(JLabel.CENTER);
+        topCardLabel.setHorizontalAlignment(JLabel.CENTER);
 
         viewStatusButton.addActionListener(new ActionListener() {
             @Override
