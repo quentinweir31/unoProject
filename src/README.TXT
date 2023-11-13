@@ -1,10 +1,10 @@
-Uno Game Project - Milestone #1
+Uno Game Project - Milestone #2
 [Version 1.00]
-October 22nd 2023
+November 13th 2023
 
 -------------------------------Overview--------------------------------------
-This milestone marks the initial phase of our Uno card game project. Our goal is to develop a text-based, 
-playable version of Uno that allows players to engage through the console using keyboard input.
+This milestone marks the second phase of our Uno card game project. Our goal is to develop a GUI-based, 
+playable version of Uno that allows players to engage through a graphical display using mouse input.
 
 -------------------------------Deliverables-----------------------------------
 1. Game Features
@@ -18,7 +18,8 @@ Observe the resultant state of cards in text format.
 UML modeling of the problem domain.
 Class diagrams with complete variable and method signatures.
 Sequence diagrams for important scenarios.
-Detailed description of data structures and relevant operations for the Model part of the MVC.
+relevant operations for the Model part of the MVC.
+Detailed description of data structures and changes made to the UML from milestone #1.
 
 -------------------------------Known Issues----------------------------------
 
@@ -33,10 +34,9 @@ Omar Hamzat 101244220
 
 
 -----------------------Changes Since Previous Deliverable--------------------
-
-Initial implementation of core game features.
-Created basic class diagrams and sequence diagrams for the Model part of MVC.
-Began documentation on data structures and operations.
+Text-based implementatin has been converted to a GUI.
+images of the playing cards have been added.
+Updated documentation on data structures and operations.
 
 
 ------------------------------Roadmap Ahead-----------------------------------
@@ -48,8 +48,8 @@ Continue documentation on data structures and operations.
 Note: Uno Flip Support in Milestone 3
 Uno Flip variation and rules will be addressed in Milestone 3.
 
------------------------------Milestone 2 Preview-------------------------------
-In Milestone 2, we will progress to develop a GUI-based iteration of the game, incorporating a View and Controller.
-This version will feature a graphical display within a JFrame, and user interaction will be facilitated through mouse input.
-Additionally, unit tests for the Model component will be created to cover areas within the game logic that are either missing or incomplete, 
-with a focus on card placement, scoring, and penalty aspects.
+-----------------------------Milestone 3 Preview-------------------------------
+In Milestone 3, We will incorporate Uno Flip cards into the game, implementing their
+specific rules and scoring mechanisms. The game will also allow for a number of AI 
+(Artificial intelligence) players. The behavior of these AI players will be designed 
+for flexibility, allowing for different strategies.
