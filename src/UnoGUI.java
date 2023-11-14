@@ -19,6 +19,8 @@ public class UnoGUI extends JFrame {
     private JPanel playerHandPanel;
     private JLabel topCardLabel;
     private JLabel currentPlayerLabel;
+    private Boolean moveMade;
+    private JButton nextPlayerButton;
 
     public UnoGUI() {
         players = new ArrayList<>();
@@ -141,6 +143,7 @@ public class UnoGUI extends JFrame {
     }
 
     private void startGame() {
+        nextPlayerButton.setEnabled(false);
         initializePlayers(players.size());
 
         currentPlayer = players.get(0);
@@ -228,9 +231,12 @@ public class UnoGUI extends JFrame {
             // Continue with the game logic or any other actions needed
             // ...
 
-            // Move to the next player and update card visibility
-            moveToNextPlayer();
-            updateCardVisibility();
+            // update the top card
+            displayTopCard();
+
+            //set moveMade to true and enable the nextPlayerButton
+            moveMade = true;
+            nextPlayerButton.setEnabled(true);
         } else {
             // Invalid play, notify the player or take appropriate action
             System.out.println("Invalid play. The selected card cannot be played.");
@@ -251,8 +257,10 @@ public class UnoGUI extends JFrame {
         // ...
 
         // Move to the next player and update card visibility
-        moveToNextPlayer();
-        updateCardVisibility();
+        //moveToNextPlayer();
+        //updateCardVisibility();
+        moveMade = true;
+        nextPlayerButton.setEnabled(true);
     }
     private char promptForColorGUI() {
         // Implement the GUI prompt for choosing a color
@@ -342,7 +350,8 @@ public class UnoGUI extends JFrame {
     private void setupGUIComponents() {
         JButton viewStatusButton = new JButton("View Status");
         JButton drawCardButton = new JButton("Draw Card");
-        JButton nextPlayerButton = new JButton("Next Player");
+        nextPlayerButton = new JButton("Next Player");
+        nextPlayerButton.setEnabled(false);
 
         JPanel buttonPanel = new JPanel();
         buttonPanel.add(viewStatusButton);
@@ -373,9 +382,12 @@ public class UnoGUI extends JFrame {
         nextPlayerButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                moveToNextPlayer();
-                updateCardVisibility();
-
+                if(moveMade){
+                    moveToNextPlayer();
+                    updateCardVisibility();
+                    moveMade = false;
+                    nextPlayerButton.setEnabled(false);
+                }
             }
         });
 
@@ -386,6 +398,8 @@ public class UnoGUI extends JFrame {
         Card drawnCard = currentPlayer.drawCardFromDeck(deck);
         if (drawnCard != null) {
             updateCardVisibility();
+            moveMade = true;
+            nextPlayerButton.setEnabled(true);
         }
     }
 
