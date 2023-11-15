@@ -62,12 +62,11 @@ public class UnoTest {
 
     }
 
-    
+
     /**
      * Test Case to verify if the system draws a card from the Deck.
      */
 
-    /*
     @Test
     public void test_DrawCardFromDeck() {
         Player player = new Player("TestPlayer");
@@ -82,9 +81,36 @@ public class UnoTest {
         assertEquals(1, player.getHand().size());
         assertEquals(drawnCard, player.getHand().get(0));
     }
-     */
-    
 
+    /**
+     * Test case checks whether a player's play is considered valid based on the provided top card.
+     * The method should return true if the selected card has either the same rank or suit as the top card,
+     * and false if otherwise.
+     */
+    @Test
+    void test_IsValidPlay() {
+        Player player = new Player("TestPlayer");
+        Card topCard = new Card(Card.Rank.DEUCE, Card.Suit.RED);
+        Card matchingCard = new Card(Card.Rank.DEUCE, Card.Suit.BLUE);
+        Card nonMatchingCard = new Card(Card.Rank.THREE, Card.Suit.GREEN);
+
+        assertTrue(player.isValidPlay(matchingCard, topCard));
+        assertFalse(player.isValidPlay(nonMatchingCard, topCard));
+    }
+
+    /**
+     * Test case verifies whether a card is correctly played from the player's hand based on the provided index.
+     * The method should return the card at the specified index, and the card should be removed from the player's hand.
+     */
+    @Test
+    void test_PlayCard() {
+        Player player = new Player("test-Player");
+        Card card = new Card(Card.Rank.DEUCE, Card.Suit.RED);
+        player.addToHand(card);
+        Card playedCard = player.playCard(0);
+        assertNotNull(playedCard);
+        assertEquals(card, playedCard);
+    }
 
     /**
      * Test Case to verify if it's a valid play with a matching rank
@@ -155,7 +181,17 @@ public class UnoTest {
         assertNotEquals(originalDeck, shuffledDeck);
     }
 
-    
+    /**
+     * Test case Verifies that the correct number of players is created and added to the game.
+     */
+    @Test
+    void test_InitializePlayers() {
+        UnoGUI unoGUI = new UnoGUI();
+        unoGUI.initializePlayers(2);
+        assertEquals(2, unoGUI.getPlayers().size());
+    }
+
+
 
 /**
  * This method is executed once after all the test methods.
