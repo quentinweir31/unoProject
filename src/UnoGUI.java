@@ -2,6 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.ConcurrentModificationException;
@@ -18,6 +19,7 @@ public class UnoGUI extends JFrame {
     private int currentPlayerIndex = 0;
     private JPanel playerHandPanel;
     private JLabel topCardLabel;
+    private JPanel topCardPanel;
     private JLabel currentPlayerLabel;
     private Boolean moveMade = false;
     private JButton nextPlayerButton;
@@ -293,14 +295,15 @@ public class UnoGUI extends JFrame {
     private void setupCardVisibility() {
         playerHandPanel = new JPanel();
         topCardLabel = new JLabel();
+        topCardPanel = new JPanel();
         currentPlayerLabel = new JLabel();
 
-        add(currentPlayerLabel, BorderLayout.NORTH);
+        add(currentPlayerLabel, BorderLayout.SOUTH);
         add(playerHandPanel, BorderLayout.CENTER);
-        add(topCardLabel, BorderLayout.SOUTH);
+        add(topCardLabel, BorderLayout.EAST);
+
 
         currentPlayerLabel.setHorizontalAlignment(JLabel.CENTER);
-        topCardLabel.setHorizontalAlignment(JLabel.CENTER);
     }
 
     private void updateCardVisibility() {
@@ -314,19 +317,37 @@ public class UnoGUI extends JFrame {
         playerHandPanel.removeAll();
         playerHandPanel.setLayout(new GridLayout(3, 1));
         playerHandPanel.add(new JPanel());
-        JPanel centerPanel = new JPanel(new FlowLayout(FlowLayout.LEADING));
+        JPanel centerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        playerHandPanel.add(centerPanel);
+
         JScrollPane scrollPane = new JScrollPane(centerPanel);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-
         playerHandPanel.add(scrollPane);
+
         for (Card card : currentPlayer.getHand()) {
-            JButton cardButton = new JButton(card.toString());
-            Dimension buttonSize = new Dimension(160, 280); // Adjust the size as needed
+            JButton cardButton = new JButton("Card Image");
+
+            String imageName = card.getImageFilename();
+            URL imageURL = getClass().getClassLoader().getResource("resources/" + imageName);
+
+            if (imageURL != null) {
+                ImageIcon cardImage = new ImageIcon(imageURL);
+                Image img = cardImage.getImage();
+                Image resizedImg = img.getScaledInstance(100,150, Image.SCALE_SMOOTH);
+                cardImage = new ImageIcon(resizedImg);
+                cardButton.setIcon(cardImage);
+            } else {
+                // Handle case where image is not found
+                cardButton.setText("Image Not Found");
+            }
+            Dimension buttonSize = new Dimension(100,150); // Adjust the size as needed
             if(cardPlayed || draw2Played || draw4Played) {
                 cardButton.setEnabled(false);
             }
             cardButton.setPreferredSize(buttonSize);
             centerPanel.add(cardButton);
+
+
 
             cardButton.addActionListener(new ActionListener() {
                 @Override
@@ -335,6 +356,7 @@ public class UnoGUI extends JFrame {
                 }
             });
         }
+
         revalidate();
         repaint();
     }
@@ -342,8 +364,51 @@ public class UnoGUI extends JFrame {
     private void displayTopCard() {
         if (topCard != null) {
             topCardLabel.setText("Top Card: " + topCard.toString());
+
+            topCardPanel.removeAll();
+            topCardPanel.setLayout(new BorderLayout());
+
+            // Create a JPanel for the top card image
+            JPanel topImagePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+            JButton topCardButton = new JButton();
+
+            // Get the filename of the image for the top card
+            String topCardImageName = topCard.getImageFilename();
+            URL topCardImageURL = getClass().getClassLoader().getResource("resources/" + topCardImageName);
+
+            if (topCardImageURL != null) {
+                ImageIcon topCardImage = new ImageIcon(topCardImageURL);
+
+                // Set a fixed size or a proportion of the label's size
+                int buttonWidth = 100;  // Adjust as needed
+                int buttonHeight = 150; // Adjust as needed
+
+                // Resize the ImageIcon to fit the button size
+                Image img = topCardImage.getImage();
+                Image resizedImg = img.getScaledInstance(buttonWidth, buttonHeight, Image.SCALE_SMOOTH);
+                topCardImage = new ImageIcon(resizedImg);
+
+                topCardButton.setIcon(topCardImage);
+            } else {
+                // Handle case where image is not found
+                topCardButton.setText("Image Not Found");
+            }
+
+            Dimension buttonSize = new Dimension(100, 150);
+            topCardButton.setPreferredSize(buttonSize);
+            topImagePanel.add(topCardButton);
+
+            // Create a label for displaying suit and rank
+            JLabel suitRankLabel = new JLabel("Top Card: " + topCard.getSuit() + " " + topCard.getRank());
+            suitRankLabel.setHorizontalAlignment(JLabel.CENTER); // Center the label text
+
+
+            // Add components to the topCardPanel
+            topCardPanel.add(topImagePanel, BorderLayout.CENTER);
+            topCardPanel.add(suitRankLabel, BorderLayout.SOUTH);
         } else {
             topCardLabel.setText("Top Card: None");
+            topCardLabel.setIcon(null);
         }
     }
 
@@ -358,8 +423,9 @@ public class UnoGUI extends JFrame {
         buttonPanel.add(drawCardButton);
         buttonPanel.add(nextPlayerButton);
 
-        add(currentPlayerLabel, BorderLayout.NORTH);
-        add(topCardLabel, BorderLayout.SOUTH);
+
+        add(currentPlayerLabel, BorderLayout.SOUTH);
+        add(topCardPanel, BorderLayout.NORTH);
         add(buttonPanel, BorderLayout.EAST);
         currentPlayerLabel.setHorizontalAlignment(JLabel.CENTER);
         topCardLabel.setHorizontalAlignment(JLabel.CENTER);
