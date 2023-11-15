@@ -23,6 +23,9 @@ public class UnoGUI extends JFrame {
     private JButton nextPlayerButton;
     private JButton drawCardButton;
     private Boolean cardPlayed = false;
+    private Boolean draw2Played = false;
+    private Boolean draw4Played = false;
+    private int numDraws = 0; // this is used for keeping track of the amount of card draws for DRAW2 and DRAW4
 
     public UnoGUI() {
         players = new ArrayList<>();
@@ -190,6 +193,8 @@ public class UnoGUI extends JFrame {
             currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
             currentPlayer = players.get(currentPlayerIndex);
             updateCurrentPlayerLabel();
+            handleSpecialCards(topCard);
+            numDraws = 0;
         }
     }
 
@@ -208,12 +213,14 @@ public class UnoGUI extends JFrame {
             System.out.println("Special card detected: DRAW2");
 
             // Simulate the logic for DRAW2 cards (you might want to implement specific rules)
-            System.out.println("The next player must draw 2 cards.");
+            draw2Played = true;
+
 
             // Additional logic for handling DRAW2 cards can be added here
+        } else if (topCard.getRank() == Card.Rank.DRAW4) {
+            System.out.println("Special card detected: DRAW4");
+            draw4Played = true;
         }
-
-        // Add logic to handle other special cards if needed
 
         // Set the updated top card after handling special cards
         this.topCard = topCard;
@@ -259,10 +266,6 @@ public class UnoGUI extends JFrame {
 
         // Continue with the game logic or any other actions needed
         // ...
-
-        // Move to the next player and update card visibility
-        //moveToNextPlayer();
-        //updateCardVisibility();
         moveMade = true;
         cardPlayed = true;
         nextPlayerButton.setEnabled(true);
@@ -285,18 +288,6 @@ public class UnoGUI extends JFrame {
 
         // Convert the choice to the corresponding color abbreviation
         return "CDHS".charAt(choice);
-    }
-
-    // Example of a method to handle playing a card
-    private void playCard(Card selectedCard) {
-        // Implement the logic to handle playing a card
-        // ...
-
-        // After playing the card, check if the player has won, or continue to the next player
-        // ...
-
-        // Start the next player's turn
-        playTurn();
     }
 
     private void setupCardVisibility() {
@@ -331,7 +322,9 @@ public class UnoGUI extends JFrame {
         for (Card card : currentPlayer.getHand()) {
             JButton cardButton = new JButton(card.toString());
             Dimension buttonSize = new Dimension(160, 280); // Adjust the size as needed
-            cardButton.setEnabled(!cardPlayed);
+            if(cardPlayed || draw2Played || draw4Played) {
+                cardButton.setEnabled(false);
+            }
             cardButton.setPreferredSize(buttonSize);
             centerPanel.add(cardButton);
 
@@ -342,7 +335,6 @@ public class UnoGUI extends JFrame {
                 }
             });
         }
-
         revalidate();
         repaint();
     }
@@ -383,14 +375,13 @@ public class UnoGUI extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 drawCard();
-
             }
         });
 
         nextPlayerButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if(moveMade){
+                if(moveMade && !draw2Played){
                     drawCardButton.setEnabled(true);
                     moveToNextPlayer();
                     moveMade = false;
@@ -400,6 +391,18 @@ public class UnoGUI extends JFrame {
 
                     nextPlayerButton.setEnabled(false);
                 }
+
+                if(moveMade && !draw4Played){
+                    drawCardButton.setEnabled(true);
+                    moveToNextPlayer();
+                    moveMade = false;
+                    cardPlayed = false;
+                    displayPlayerHand();
+                    updateCardVisibility();
+
+                    nextPlayerButton.setEnabled(false);
+                }
+
             }
         });
 
@@ -407,12 +410,25 @@ public class UnoGUI extends JFrame {
     }
 
     private void drawCard() {
+        numDraws += 1;
+        if(topCard.getRank() == Card.Rank.DRAW2) {
+            if (numDraws == 2) {
+                draw2Played = false;
+            }
+        }
+        if(topCard.getRank() == Card.Rank.DRAW4) {
+            if (numDraws == 4) {
+                draw4Played = false;
+            }
+        }
         Card drawnCard = currentPlayer.drawCardFromDeck(deck);
         if (drawnCard != null) {
             updateCardVisibility();
-            drawCardButton.setEnabled(false);
-            moveMade = true;
-            nextPlayerButton.setEnabled(true);
+            if (!draw2Played && !draw4Played) {
+                drawCardButton.setEnabled(false);
+                moveMade = true;
+                nextPlayerButton.setEnabled(true);
+            }
         }
     }
 
