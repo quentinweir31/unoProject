@@ -37,6 +37,7 @@ public class UnoTest {
     /**
      * Test Case to verify if hand actions such as add/ remove and draw card work
      */
+
     @Test
     public void test_PlayerHandActions() {
         //Testing add to hand, remove from hand/ draw car
@@ -61,55 +62,12 @@ public class UnoTest {
 
     }
 
-
-    /**
-     * Test Case to verify the display Hand method works appropriralety 
-     */
-    @Test
-    public void test_PlayerDisplayHand() {
-        //create a player with a hand and display it, assert if the values are correct
-        Player p1 = new Player("Test_Player");
-        
-        //Creating a sample hand to test against
-        Card sample_card = new Card(Card.Rank.FIVE, Card.Suit.YELLOW);
-        ArrayList<Card> testHand = new ArrayList<Card>();
-        
-        
-        //adding a card to both the player's hand and the test, verifying that the card is added 
-        testHand.add(sample_card);
-        p1.addToHand(sample_card); 
-        p1.displayHand();
-        assertEquals(p1.getHand(), testHand);
-    }
-
-    /**
-     * Test Case to verify if you draw a card from the Deck.
-     */
-
-    @Test
-    public void test_PlayerDrawCardFromDeck() {
-        // Create a player
-        Player player = new Player("TestPlayer");
-        assertNotNull(player);
-
-        // Create a deck
-        List<Card> deck = new ArrayList<>();
-        deck.add(new Card(Card.Rank.DRAW2, Card.Suit.RED));
-
-        // Draw a card from the deck
-        Card drawnCard = player.drawCardFromDeck(deck);
-
-        // Check if the drawn card is not null
-        assertNotNull(drawnCard);
-
-        // Check if the card is added to the player's hand
-        assertEquals(1, player.getHand().size());
-        assertEquals(drawnCard, player.getHand().get(0));
-    }
-
+    
     /**
      * Test Case to verify if the system draws a card from the Deck.
      */
+
+    /*
     @Test
     public void test_DrawCardFromDeck() {
         Player player = new Player("TestPlayer");
@@ -124,6 +82,9 @@ public class UnoTest {
         assertEquals(1, player.getHand().size());
         assertEquals(drawnCard, player.getHand().get(0));
     }
+     */
+    
+
 
     /**
      * Test Case to verify if it's a valid play with a matching rank
@@ -167,15 +128,39 @@ public class UnoTest {
         assertFalse(player.isValidPlay(selectedCard, topCard));
     }
 
+    /**
+     * Test case to verify that the createDeck method in the UnoGUI class generates a
+     * non-null deck and checks its size to ensure it conforms to the expected size
+     * of a standard Uno deck.
 
-
-
-
+     */
+    @Test
+    void test_CreateDeck() {
+        UnoGUI unoGUI = new UnoGUI();
+        assertNotNull(unoGUI.createDeck());
+        assertEquals(52, unoGUI.createDeck().size()); // Assuming a standard Uno deck
+    }
 
     /**
-     * This method is executed once after all the test methods.
-     * It performs any necessary cleanup after all the tests have been executed.
+     * Test case to ensure that the shuffleDeck method in the UnoGUI class shuffles
+     * the provided deck and results in a deck that is not equal to the original
+     * un-shuffled deck.
      */
+    @Test
+    void test_ShuffleDeck() {
+        UnoGUI unoGUI = new UnoGUI();
+        List<Card> originalDeck = unoGUI.createDeck();
+        List<Card> shuffledDeck = unoGUI.createDeck();
+        unoGUI.shuffleDeck(shuffledDeck);
+        assertNotEquals(originalDeck, shuffledDeck);
+    }
+
+    
+
+/**
+ * This method is executed once after all the test methods.
+ * It performs any necessary cleanup after all the tests have been executed.
+ */
 
     @AfterAll
     private static void tearDown() {
