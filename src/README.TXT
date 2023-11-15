@@ -1,5 +1,5 @@
 Uno Game Project - Milestone #2
-[Version 1.00]
+[Version 1.20]
 November 13th 2023
 
 -------------------------------Overview--------------------------------------
