@@ -28,6 +28,7 @@ public class UnoGUI extends JFrame {
     private Boolean draw2Played = false;
     private Boolean draw4Played = false;
     private int numDraws = 0; // this is used for keeping track of the amount of card draws for DRAW2 and DRAW4
+    public Boolean reverse = false;
 
     public UnoGUI() {
         players = new ArrayList<>();
@@ -190,9 +191,12 @@ public class UnoGUI extends JFrame {
 
     private void moveToNextPlayer() {
         if (currentPlayer!= null) {
-            int currentIndex = players.indexOf(currentPlayer);
-            int nextIndex = (currentIndex + 1) % players.size();
-            currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
+            if(!reverse) {
+                currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
+            } else {
+                currentPlayerIndex = (currentPlayerIndex - 1 + players.size()) % players.size();
+            }
+            //currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
             currentPlayer = players.get(currentPlayerIndex);
             updateCurrentPlayerLabel();
             handleSpecialCards(topCard);
@@ -222,6 +226,9 @@ public class UnoGUI extends JFrame {
         } else if (topCard.getRank() == Card.Rank.DRAW4) {
             System.out.println("Special card detected: DRAW4");
             draw4Played = true;
+        } else if (topCard.getRank() == Card.Rank.REVERSE) {
+            System.out.println("Special card detected: REVERSE");
+            reverse = !reverse;
         }
 
         // Set the updated top card after handling special cards
@@ -404,8 +411,12 @@ public class UnoGUI extends JFrame {
 
 
             // Add components to the topCardPanel
+            topCardPanel.removeAll();
+            topCardPanel.setLayout(new BorderLayout());
             topCardPanel.add(topImagePanel, BorderLayout.CENTER);
             topCardPanel.add(suitRankLabel, BorderLayout.SOUTH);
+
+            add(topCardPanel, BorderLayout.NORTH);
         } else {
             topCardLabel.setText("Top Card: None");
             topCardLabel.setIcon(null);
@@ -454,7 +465,7 @@ public class UnoGUI extends JFrame {
                     cardPlayed = false;
                     displayPlayerHand();
                     updateCardVisibility();
-
+                    displayTopCard();
                     nextPlayerButton.setEnabled(false);
                 }
 
