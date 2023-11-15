@@ -19,8 +19,10 @@ public class UnoGUI extends JFrame {
     private JPanel playerHandPanel;
     private JLabel topCardLabel;
     private JLabel currentPlayerLabel;
-    private Boolean moveMade;
+    private Boolean moveMade = false;
     private JButton nextPlayerButton;
+    private JButton drawCardButton;
+    private Boolean cardPlayed = false;
 
     public UnoGUI() {
         players = new ArrayList<>();
@@ -227,16 +229,18 @@ public class UnoGUI extends JFrame {
 
             // Remove the selected card from the player's hand
             currentPlayer.removeFromHand(currentPlayer.getHand().indexOf(selectedCard));
-
+            moveMade = true;
+            cardPlayed = true;
+            drawCardButton.setEnabled(false);
+            nextPlayerButton.setEnabled(true);
             // Continue with the game logic or any other actions needed
             // ...
 
             // update the top card
             displayTopCard();
+            displayPlayerHand();
 
-            //set moveMade to true and enable the nextPlayerButton
-            moveMade = true;
-            nextPlayerButton.setEnabled(true);
+
         } else {
             // Invalid play, notify the player or take appropriate action
             System.out.println("Invalid play. The selected card cannot be played.");
@@ -260,6 +264,7 @@ public class UnoGUI extends JFrame {
         //moveToNextPlayer();
         //updateCardVisibility();
         moveMade = true;
+        cardPlayed = true;
         nextPlayerButton.setEnabled(true);
     }
     private char promptForColorGUI() {
@@ -318,12 +323,15 @@ public class UnoGUI extends JFrame {
         playerHandPanel.removeAll();
         playerHandPanel.setLayout(new GridLayout(3, 1));
         playerHandPanel.add(new JPanel());
-        JPanel centerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        playerHandPanel.add(centerPanel);
+        JPanel centerPanel = new JPanel(new FlowLayout(FlowLayout.LEADING));
+        JScrollPane scrollPane = new JScrollPane(centerPanel);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 
+        playerHandPanel.add(scrollPane);
         for (Card card : currentPlayer.getHand()) {
             JButton cardButton = new JButton(card.toString());
-            Dimension buttonSize = new Dimension(150, 250); // Adjust the size as needed
+            Dimension buttonSize = new Dimension(160, 280); // Adjust the size as needed
+            cardButton.setEnabled(!cardPlayed);
             cardButton.setPreferredSize(buttonSize);
             centerPanel.add(cardButton);
 
@@ -349,7 +357,7 @@ public class UnoGUI extends JFrame {
 
     private void setupGUIComponents() {
         JButton viewStatusButton = new JButton("View Status");
-        JButton drawCardButton = new JButton("Draw Card");
+        drawCardButton = new JButton("Draw Card");
         nextPlayerButton = new JButton("Next Player");
         nextPlayerButton.setEnabled(false);
 
@@ -383,9 +391,13 @@ public class UnoGUI extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if(moveMade){
+                    drawCardButton.setEnabled(true);
                     moveToNextPlayer();
-                    updateCardVisibility();
                     moveMade = false;
+                    cardPlayed = false;
+                    displayPlayerHand();
+                    updateCardVisibility();
+
                     nextPlayerButton.setEnabled(false);
                 }
             }
@@ -398,6 +410,7 @@ public class UnoGUI extends JFrame {
         Card drawnCard = currentPlayer.drawCardFromDeck(deck);
         if (drawnCard != null) {
             updateCardVisibility();
+            drawCardButton.setEnabled(false);
             moveMade = true;
             nextPlayerButton.setEnabled(true);
         }
