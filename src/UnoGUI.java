@@ -29,7 +29,7 @@ public class UnoGUI extends JFrame {
     private Boolean draw4Played = false;
     private int numDraws = 0; // this is used for keeping track of the amount of card draws for DRAW2 and DRAW4
     public Boolean reverse = false;
-    private Boolean firstMove = false;
+    public Boolean skip = false;
 
     public UnoGUI() {
         players = new ArrayList<>();
@@ -46,7 +46,6 @@ public class UnoGUI extends JFrame {
 
         setLocationRelativeTo(null);
         setVisible(true);
-        firstMove = true;
     }
 
     private List<Card> createDeck() {
@@ -169,65 +168,84 @@ public class UnoGUI extends JFrame {
                 player.addToHand(drawnCard);
             }
         }
-
         // Set the top card on the discard pile
         topCard = deck.remove(0);
-
-        // Handle special cards at the beginning (if needed)
-        //handleSpecialCards(topCard);
-
-        // Start the first player's turn
         updateCardVisibility();
     }
 
     private void moveToNextPlayer() {
         if (currentPlayer!= null) {
-            if(!reverse) {
-                currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
+            if(reverse) {
+                if(currentPlayerIndex > 0) {
+                    currentPlayerIndex--;
+                } else {
+                    currentPlayerIndex = players.size() - 1;
+                }
             } else {
-                currentPlayerIndex = (currentPlayerIndex - 1 + players.size()) % players.size();
+                if(currentPlayerIndex < (players.size()-1)) {
+                    currentPlayerIndex++;
+                } else {
+                    currentPlayerIndex = 0;
+                }
             }
-            //currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
+            if(skip) {
+                if(reverse) {
+                    if(currentPlayerIndex > 0) {
+                        currentPlayerIndex--;
+                    } else {
+                        currentPlayerIndex = players.size() - 1;
+                    }
+                } else {
+                    if(currentPlayerIndex < (players.size()-1)){
+                        currentPlayerIndex++;
+                    } else {
+                        currentPlayerIndex = 0;
+                    }
+                }
+            }
+            skip = false;
             currentPlayer = players.get(currentPlayerIndex);
             updateCurrentPlayerLabel();
-            handleSpecialCards(topCard);
             numDraws = 0;
         }
     }
 
     private void handleSpecialCards(Card topCard) {
-        if(firstMove) {
-            if (topCard.getRank() == Card.Rank.WILD) {
-                System.out.println("Special card detected: WILD");
 
-                // Prompt the user to choose a color using a GUI dialog
-                char chosenColor = promptForColorGUI();
+        if (topCard.getRank() == Card.Rank.WILD) {
+            System.out.println("Special card detected: WILD");
 
-                // Update the suit of the WILD card
-                topCard.setSuit(chosenColor);
+            // Prompt the user to choose a color using a GUI dialog
+            char chosenColor = promptForColorGUI();
 
-                System.out.println("Top card after handling WILD: " + topCard);
-            } else if (topCard.getRank() == Card.Rank.DRAW2) {
-                System.out.println("Special card detected: DRAW2");
+            // Update the suit of the WILD card
+            topCard.setSuit(chosenColor);
 
-                // Simulate the logic for DRAW2 cards (you might want to implement specific rules)
-                draw2Played = true;
+            System.out.println("Top card after handling WILD: " + topCard);
+        } else if (topCard.getRank() == Card.Rank.DRAW2) {
+            System.out.println("Special card detected: DRAW2");
+
+            // Simulate the logic for DRAW2 cards (you might want to implement specific rules)
+            draw2Played = true;
 
 
-                // Additional logic for handling DRAW2 cards can be added here
-            } else if (topCard.getRank() == Card.Rank.DRAW4) {
-                System.out.println("Special card detected: DRAW4");
-                draw4Played = true;
-            } else if (topCard.getRank() == Card.Rank.REVERSE) {
-                System.out.println("Special card detected: REVERSE");
-                reverse = !reverse;
-            }
-
-            // Set the updated top card after handling special cards
-            this.topCard = topCard;
+            // Additional logic for handling DRAW2 cards can be added here
+        } else if (topCard.getRank() == Card.Rank.DRAW4) {
+            System.out.println("Special card detected: DRAW4");
+            draw4Played = true;
+        } else if (topCard.getRank() == Card.Rank.REVERSE) {
+            System.out.println("Special card detected: REVERSE");
+            reverse = !reverse;
+        } else if (topCard.getRank() == Card.Rank.SKIP) {
+            System.out.println("Special card detected: SKIP");
+            skip = true;
         }
 
+        // Set the updated top card after handling special cards
+        this.topCard = topCard;
     }
+
+
 
     private void handleCardButtonClick(Card selectedCard) {
         if (selectedCard.getRank() == Card.Rank.WILD) {
@@ -237,6 +255,7 @@ public class UnoGUI extends JFrame {
         } else if (currentPlayer.isValidPlay(selectedCard, topCard)) {
             // Replace the top card with the selected card
             topCard = selectedCard;
+            handleSpecialCards(topCard);
 
             // Remove the selected card from the player's hand
             currentPlayer.removeFromHand(currentPlayer.getHand().indexOf(selectedCard));
