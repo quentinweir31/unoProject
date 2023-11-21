@@ -62,10 +62,6 @@ public class Player {
         hand.remove(index);
     }
 
-    // Draw a card from the deck
-    public void drawCard(Card card) {
-        addToHand(card);
-    }
 
     /**
      * Simulates drawing a card from the deck and adds it to the player's hand.
@@ -192,7 +188,7 @@ public class Player {
     public void setGameReference(Main game) {
         this.game = game;
     }
-    
+
     /**
      * Checks if the selected card is a valid play based on the top card.
      *
@@ -203,10 +199,10 @@ public class Player {
     public boolean isValidPlay(Card selectedCard, Card topCard) {
         return selectedCard.getRank() == topCard.getRank() || selectedCard.getSuit() == topCard.getSuit();
     }
-    
+
     /**
      * Updates the wild card after the user has chosen a colour
-     * 
+     *
      * @param originalCard The card to be updated
      * @parem updatedCard The new card that will replace the original wild card
      */
@@ -224,3 +220,8 @@ public class Player {
         }
     }
 }
+
+
+//changes ive made:
+//changed isValidPlay to public
+//created the updateWildCardInHand method
