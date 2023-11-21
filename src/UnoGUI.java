@@ -497,6 +497,8 @@ public class UnoGUI extends JFrame {
         Card drawnCard = currentPlayer.drawCardFromDeck(deck);
         if (drawnCard != null) {
             updateCardVisibility();
+            revalidate();
+            repaint();
             if (!draw2Played && !draw4Played) {
                 drawCardButton.setEnabled(false);
                 moveMade = true;
