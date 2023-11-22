@@ -156,7 +156,6 @@ public class UnoGUI extends JFrame {
         initializePlayers(players.size());
 
         currentPlayer = players.get(0);
-        updateCardVisibility();
         updateCurrentPlayerLabel();
 
         shuffleDeck(deck);
@@ -213,13 +212,13 @@ public class UnoGUI extends JFrame {
     private void handleSpecialCards(Card topCard) {
 
         if (topCard.getRank() == Card.Rank.WILD) {
-            System.out.println("Special card detected: WILD");
-
-            // Prompt the user to choose a color using a GUI dialog
-            char chosenColor = promptForColorGUI();
-
-            // Update the suit of the WILD card
-            topCard.setSuit(chosenColor);
+//            System.out.println("Special card detected: WILD");
+//
+//            // Prompt the user to choose a color using a GUI dialog
+//            char chosenColor = promptForColorGUI();
+//
+//            // Update the suit of the WILD card
+//            topCard.setSuit(chosenColor);
 
             System.out.println("Top card after handling WILD: " + topCard);
         } else if (topCard.getRank() == Card.Rank.DRAW2) {
@@ -245,59 +244,28 @@ public class UnoGUI extends JFrame {
         this.topCard = topCard;
     }
 
-
-
     private void handleCardButtonClick(Card selectedCard) {
-        if (selectedCard.getRank() == Card.Rank.WILD) {
-            // If the selected card is a Wild Card, handle it separately
-            handleWildCardFromHand(selectedCard);
+        if (selectedCard.getRank() == Card.Rank.WILD || selectedCard.getRank() == Card.Rank.DRAW4) {
             topCard = selectedCard;
-        } else if (currentPlayer.isValidPlay(selectedCard, topCard)) {
-            // Replace the top card with the selected card
+            promptForColorGUI();
+        }
+
+        if (currentPlayer.isValidPlay(selectedCard, topCard)) {
             topCard = selectedCard;
             handleSpecialCards(topCard);
-
-            // Remove the selected card from the player's hand
             currentPlayer.removeFromHand(currentPlayer.getHand().indexOf(selectedCard));
             moveMade = true;
             cardPlayed = true;
             drawCardButton.setEnabled(false);
             nextPlayerButton.setEnabled(true);
-            // Continue with the game logic or any other actions needed
-            // ...
-
-            // update the top card
             displayTopCard();
             displayPlayerHand();
 
-
         } else {
-            // Invalid play, notify the player or take appropriate action
             System.out.println("Invalid play. The selected card cannot be played.");
         }
     }
-
-    private void handleWildCardFromHand(Card wildCard) {
-        // Prompt the user to choose a color using a GUI dialog
-        char chosenColor = promptForColorGUI();
-
-        // Update the suit of the WILD card
-        wildCard.setSuit(chosenColor);
-        Card updatedWildCard = new Card(Card.Rank.WILD, Card.getSuitFromAbbrev(chosenColor));
-
-        currentPlayer.updateWildCardInHand(wildCard, updatedWildCard);
-
-        // Continue with the game logic or any other actions needed
-        // ...
-        moveMade = true;
-        cardPlayed = true;
-        nextPlayerButton.setEnabled(true);
-    }
-    private char promptForColorGUI() {
-        // Implement the GUI prompt for choosing a color
-        // You can use a JOptionPane or other GUI components for this
-        // For simplicity, let's use a JOptionPane input dialog
-
+    private void promptForColorGUI() {
         String[] options = {"RED", "YELLOW", "BLUE", "GREEN"};
         int choice = JOptionPane.showOptionDialog(
                 this,
@@ -309,8 +277,22 @@ public class UnoGUI extends JFrame {
                 options,
                 options[0]);
 
-        // Convert the choice to the corresponding color abbreviation
-        return "CDHS".charAt(choice);
+        switch (choice) {
+            case 0:
+               topCard.setSuit(Card.Suit.RED);
+               break;
+            case 1:
+                topCard.setSuit(Card.Suit.YELLOW);
+                break;
+            case 2:
+                topCard.setSuit(Card.Suit.BLUE);
+                break;
+            case 3:
+                topCard.setSuit(Card.Suit.GREEN);
+                break;
+            default:
+                break;
+        }
     }
 
     private void setupCardVisibility() {
