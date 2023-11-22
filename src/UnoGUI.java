@@ -48,7 +48,7 @@ public class UnoGUI extends JFrame {
         setVisible(true);
     }
 
-    private List<Card> createDeck() {
+    public List<Card> createDeck() {
         List<Card> deck = new ArrayList<>();
 
         for (Card.Suit suit : Card.Suit.values()) {
@@ -62,7 +62,7 @@ public class UnoGUI extends JFrame {
         return deck;
     }
 
-    private void shuffleDeck(List<Card> deck) {
+    public void shuffleDeck(List<Card> deck) {
         Collections.shuffle(deck);
     }
 
@@ -143,7 +143,7 @@ public class UnoGUI extends JFrame {
         });
     }
 
-    private void initializePlayers(int playerCount) {
+    public void initializePlayers(int playerCount) {
         players.clear();
 
         for (int i = 0; i < playerCount; i++) {
@@ -209,6 +209,32 @@ public class UnoGUI extends JFrame {
         }
     }
 
+    public void checkForWinner() {
+        for (Player player : players) {
+            if (player.getHand().isEmpty()) {
+                String winnerMessage = player.getName() + " wins the game!";
+                JOptionPane.showMessageDialog(this, winnerMessage);
+                System.out.println(player.getName() + " wins the game!");
+                restartGame();
+            }
+        }
+    }
+
+    public void restartGame() {
+        // Perform any necessary actions to reset the game state
+        // For example, reshuffle the deck, reset scores, etc.
+
+        // Clear hands of all players
+        for (Player player : players) {
+            player.getHand().clear();
+        }
+
+        // Reset other game-related variables
+        // ...
+
+        // Start a new game or perform any other initialization steps
+        startGame();
+    }
     private void handleSpecialCards(Card topCard) {
 
         if (topCard.getRank() == Card.Rank.WILD) {
@@ -279,8 +305,8 @@ public class UnoGUI extends JFrame {
 
         switch (choice) {
             case 0:
-               topCard.setSuit(Card.Suit.RED);
-               break;
+                topCard.setSuit(Card.Suit.RED);
+                break;
             case 1:
                 topCard.setSuit(Card.Suit.YELLOW);
                 break;
@@ -309,14 +335,14 @@ public class UnoGUI extends JFrame {
         currentPlayerLabel.setHorizontalAlignment(JLabel.CENTER);
     }
 
-    private void updateCardVisibility() {
+    public void updateCardVisibility() {
         if (!players.isEmpty() && currentPlayer != null) {
             displayPlayerHand();
             displayTopCard();
         }
     }
 
-    private void displayPlayerHand() {
+    public void displayPlayerHand() {
         playerHandPanel.removeAll();
         playerHandPanel.setLayout(new GridLayout(3, 1));
         playerHandPanel.add(new JPanel());
@@ -364,7 +390,7 @@ public class UnoGUI extends JFrame {
         repaint();
     }
 
-    private void displayTopCard() {
+    public void displayTopCard() {
         if (topCard != null) {
             topCardPanel.removeAll();
             topCardLabel.setText("Top Card: " + topCard.toString());
@@ -420,7 +446,7 @@ public class UnoGUI extends JFrame {
         }
     }
 
-    private void setupGUIComponents() {
+    public void setupGUIComponents() {
         JButton viewStatusButton = new JButton("View Status");
         drawCardButton = new JButton("Draw Card");
         nextPlayerButton = new JButton("Next Player");
@@ -448,6 +474,7 @@ public class UnoGUI extends JFrame {
         drawCardButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                checkForWinner();
                 drawCard();
             }
         });
@@ -483,7 +510,7 @@ public class UnoGUI extends JFrame {
         updateCurrentPlayerLabel();
     }
 
-    private void drawCard() {
+    public void drawCard() {
         numDraws += 1;
         if(topCard.getRank() == Card.Rank.DRAW2) {
             if (numDraws == 2) {
@@ -508,7 +535,7 @@ public class UnoGUI extends JFrame {
         }
     }
 
-    private void displayPlayerHands() {
+    public void displayPlayerHands() {
         JTextArea playerHandsTextArea = new JTextArea();
         playerHandsTextArea.setEditable(false);
         playerHandsTextArea.append("Player Hands:\n");
@@ -521,12 +548,16 @@ public class UnoGUI extends JFrame {
                 "Player Hands", JOptionPane.INFORMATION_MESSAGE);
     }
 
-    private void updateCurrentPlayerLabel() {
+    public void updateCurrentPlayerLabel() {
         if (currentPlayer != null) {
             currentPlayerLabel.setText("Current Player: " + currentPlayer.getName());
         } else {
             currentPlayerLabel.setText("Current Player: None");
         }
+    }
+
+    public List<Player> getPlayers() {
+        return players;
     }
 
 
