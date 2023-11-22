@@ -1,4 +1,8 @@
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.Scanner;
+import java.util.Collections;
 
 
 /**
@@ -22,7 +26,7 @@ public class Player {
         this.name = name;
         this.hand = new ArrayList<>();
         this.game = game;
-        this.score = 0;
+        this.score = 0; // Initialize points to 0
 
     }
 
@@ -59,9 +63,17 @@ public class Player {
      * @param index The index of the card to remove.
      */
     public void removeFromHand(int index) {
-        hand.remove(index);
+        if (index >= 0 && index < hand.size()) {
+            hand.remove(index);
+        } else {
+            System.out.println("Invalid index. Cannot remove card from hand.");
+        }
     }
 
+    // Draw a card from the deck
+    public void drawCard(Card card) {
+        addToHand(card);
+    }
 
     /**
      * Simulates drawing a card from the deck and adds it to the player's hand.
@@ -71,6 +83,7 @@ public class Player {
      */
     public Card drawCardFromDeck(List<Card> deck) {
         if (!deck.isEmpty()) {
+            shuffleDeck(deck);
             Card drawnCard = deck.remove(0);
             System.out.println(name + " draws a card: " + drawnCard);
             addToHand(drawnCard);
@@ -81,6 +94,22 @@ public class Player {
         }
     }
 
+
+    /**
+     * Shuffles the deck of cards.
+     *
+     * @param deck The deck of cards to shuffle.
+     */
+    public void shuffleDeck(List<Card> deck) {
+        Collections.shuffle(deck);
+    }
+
+    public void updateWildCardInHand(Card oldWildCard, Card newWildCard) {
+        int index = hand.indexOf(oldWildCard);
+        if (index != -1) {
+            hand.set(index, newWildCard);
+        }
+    }
     /**
      * Simulates playing a card from the player's hand.
      *
@@ -88,6 +117,7 @@ public class Player {
      * @return The played card.
      */
     public Card playCard(int index) {
+        hand.remove(index);
         return hand.get(index);
     }
 
@@ -114,9 +144,15 @@ public class Player {
         displayHand();
         System.out.println("Top card: " + topCard);
         System.out.println("Score: " + score);
+        UnoGUI newUno = new UnoGUI();
+
+        newUno.checkForWinner();
 
         Scanner scanner = new Scanner(System.in);
         int choice;
+        Card wildCard = null;
+        int wildCardIndex = -1;
+
 
         do {
             System.out.print("Enter card index to play or 0 to draw a card: ");
@@ -130,11 +166,14 @@ public class Player {
                 // Handle the WILD card
                 if (selectedCard.getRank() == Card.Rank.WILD || topCard.getRank() == Card.Rank.WILD) {
                     System.out.println(name + " plays WILD!");
+                    wildCardIndex = choice - 1;  // Track the index of the original wild card
+                    wildCard = hand.get(wildCardIndex);  // Track the original wild card
                     // Prompt the player to choose a color
                     System.out.print("Choose a color (C/D/H/S) for the WILD card: ");
                     char chosenColor = scanner.next().charAt(0);
                     // Update the suit of the selected card
                     selectedCard = new Card(Card.Rank.WILD, Card.getSuitFromAbbrev(chosenColor));
+                    topCard = new Card(Card.Rank.WILD, Card.getSuitFromAbbrev(chosenColor));
                 }
 
                 // Handle the DRAW2 card
@@ -166,19 +205,35 @@ public class Player {
                         System.out.println(name + " scores 1 point!");
                     }
 
+                    if (wildCard != null) {
+                        removeFromHand(hand.indexOf(wildCard));
+                    }
+
+
                     return selectedCard;  // Return the played card
                 } else {
                     System.out.println("Invalid play. The selected card cannot be played. Draw a card.");
                     drawCardFromDeck(deck);
                 }
+
+                displayHand();
             } else {
                 System.out.println("Invalid choice. Please try again.");
             }
         } while (true);
 
         // The loop will always break before reaching this point, but for the sake of completeness
+
     }
 
+    public int getPoints() {
+        return score;
+    }
+
+    // Method to add a point
+    public void addPoint() {
+        score++;
+    }
 
     /**
      * Sets the game reference for the player.
@@ -188,7 +243,6 @@ public class Player {
     public void setGameReference(Main game) {
         this.game = game;
     }
-
     /**
      * Checks if the selected card is a valid play based on the top card.
      *
@@ -199,29 +253,14 @@ public class Player {
     public boolean isValidPlay(Card selectedCard, Card topCard) {
         return selectedCard.getRank() == topCard.getRank() || selectedCard.getSuit() == topCard.getSuit();
     }
-
-    /**
-     * Updates the wild card after the user has chosen a colour
-     *
-     * @param originalCard The card to be updated
-     * @parem updatedCard The new card that will replace the original wild card
-     */
-    public void updateWildCardInHand(Card originalCard, Card updatedCard) {
-        //loops through each card using an iterator looking for the originalCard parameter
-        //once the original card is found, it is replace by the updatedCard parameter
-        Iterator<Card> iter = hand.iterator();
-        while (iter.hasNext()) {
-            Card card = iter.next();
-            if (card == originalCard) {
-                iter.remove();
-                hand.add(updatedCard);
-                return;
-            }
-        }
     }
-}
+
 
 
 //changes ive made:
 //changed isValidPlay to public
 //created the updateWildCardInHand method
+
+
+// changes made by Jonas
+// called checkForWinner method to takeTurn method.
