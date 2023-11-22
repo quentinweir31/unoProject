@@ -62,7 +62,7 @@ public class Card {
         }
     }
     private final Rank rank;
-    private final Suit suit;
+    private Suit suit;
 
 
     /**
@@ -104,8 +104,8 @@ public class Card {
         return suit;
     }
 
-    public void setSuit(char chosenColor) {
-
+    public void setSuit(Suit newSuit) {
+        this.suit = newSuit;
     }
 
 
@@ -120,6 +120,8 @@ public class Card {
         return rank + " of " + suit;
     }
 
+    public String getImageFilename() {
+        return suit.name() + "_" + rank.name() + ".png";
+    }
+
 }
-
-
