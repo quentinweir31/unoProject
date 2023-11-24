@@ -24,6 +24,7 @@ public class UnoGUI extends JFrame {
     private Boolean moveMade = false;
     private JButton nextPlayerButton;
     private JButton drawCardButton;
+    private JButton flipButton;
     private Boolean cardPlayed = false;
     private Boolean draw2Played = false;
     private Boolean draw4Played = false;
@@ -151,6 +152,30 @@ public class UnoGUI extends JFrame {
         }
     }
 
+    public void switchToFlipDeck() {
+        deck.clear();
+        deck.addAll(createFlipDeck());
+        shuffleDeck(deck);
+        updateCardVisibility();
+    }
+
+    public List<Card> createFlipDeck() {
+        List<Card> flipDeck = new ArrayList<>();
+
+        // Add Uno Flip cards to the deck
+        for (Card.Suit suit : Card.Suit.values()) {
+
+            // Handle case where image is not found
+            System.out.println("Image Not Found for FLIP card");
+            flipDeck.add(new Card(Card.Rank.FLIP, suit));  // Add FLIP card without image
+
+
+            // Add other Uno Flip cards if necessary
+        }
+
+        return flipDeck;
+    }
+
     private void startGame() {
         nextPlayerButton.setEnabled(false);
         initializePlayers(players.size());
@@ -258,7 +283,10 @@ public class UnoGUI extends JFrame {
         } else if (topCard.getRank() == Card.Rank.DRAW4) {
             System.out.println("Special card detected: DRAW4");
             draw4Played = true;
-        } else if (topCard.getRank() == Card.Rank.REVERSE) {
+        } else if (topCard.getRank() == Card.Rank.FLIP) {
+            System.out.println("Special card detected: FLIP");
+            switchToFlipDeck();
+        }else if (topCard.getRank() == Card.Rank.REVERSE) {
             System.out.println("Special card detected: REVERSE");
             reverse = !reverse;
         } else if (topCard.getRank() == Card.Rank.SKIP) {
@@ -483,6 +511,7 @@ public class UnoGUI extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if(moveMade && !draw2Played){
+                    checkForWinner();
                     drawCardButton.setEnabled(true);
                     moveToNextPlayer();
                     moveMade = false;
@@ -494,6 +523,7 @@ public class UnoGUI extends JFrame {
                 }
 
                 if(moveMade && !draw4Played){
+                    checkForWinner();
                     drawCardButton.setEnabled(true);
                     moveToNextPlayer();
                     moveMade = false;
