@@ -117,8 +117,12 @@ public class Player {
      * @return The played card.
      */
     public Card playCard(int index) {
-        hand.remove(index);
-        return hand.get(index);
+        if (index >= 0 && index < hand.size()) {
+            return hand.remove(index);
+        } else {
+            System.out.println("Invalid index. Cannot play card from hand.");
+            return null;  // or throw an exception, depending on your design
+        }
     }
 
     /**
@@ -184,6 +188,11 @@ public class Player {
                     game.drawTwoForNextPlayer(deck);
 
                     return selectedCard;
+                }
+
+                if (selectedCard.getRank() == Card.Rank.FLIP || topCard.getRank() == Card.Rank.FLIP) {
+                    System.out.println(name + " plays FLIP! Deck is flipped.");
+                    newUno.switchToFlipDeck();
                 }
 
                 if (selectedCard.getRank() == Card.Rank.SKIP || topCard.getRank() == Card.Rank.SKIP) {
@@ -254,6 +263,8 @@ public class Player {
         return selectedCard.getRank() == topCard.getRank() || selectedCard.getSuit() == topCard.getSuit();
     }
     }
+
+
 
 
 
