@@ -58,15 +58,16 @@ public class UnoGUI extends JFrame {
         List<Card> deck = new ArrayList<>();
 
         for (Card.Suit suit : Card.Suit.values()) {
-            if (suit == Card.Suit.PINK || suit == Card.Suit.TEAL || suit == Card.Suit.PURPLE || suit == Card.Suit.ORANGE) {
-                for (Card.Rank rank : Card.Rank.values()) {
-                    if (rank == Card.Rank.FLIP) {
-                        deck.add(new Card(rank, suit));
-                    } else if (rank != Card.Rank.DRAW2 && rank != Card.Rank.DRAW4 && rank != Card.Rank.WILD) {
-                        // Include other ranks if needed, excluding DRAW2, DRAW4, and WILD
-                        deck.add(new Card(rank, suit));
-                    }
+            if (suit != Card.Suit.PINK && suit != Card.Suit.TEAL && suit != Card.Suit.PURPLE && suit != Card.Suit.ORANGE) {
+                // Include other ranks if needed, excluding DRAW2, DRAW4, and WILD
+                for (Card.Rank rank : Arrays.asList(Card.Rank.DEUCE, Card.Rank.THREE, Card.Rank.FOUR, Card.Rank.FIVE,
+                        Card.Rank.SIX, Card.Rank.SEVEN, Card.Rank.EIGHT, Card.Rank.NINE, Card.Rank.SKIP,
+                        Card.Rank.REVERSE, Card.Rank.WILD)) {
+                    deck.add(new Card(rank, suit));
                 }
+
+                // Add the flip card for each allowed suit
+                deck.add(new Card(Card.Rank.FLIP, suit));
             }
         }
 
