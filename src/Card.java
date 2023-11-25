@@ -64,6 +64,16 @@ public class Card {
     private final Rank rank;
     private Suit suit;
 
+    private static boolean isFlipped = false;
+
+    public static void flipDeck() {
+        isFlipped = !isFlipped;
+    }
+
+    public static boolean isFlipped() {
+        return isFlipped;
+    }
+
 
     /**
      * Constructs a Card instance based on the provided abbreviation string.
