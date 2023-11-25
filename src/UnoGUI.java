@@ -3,9 +3,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.ConcurrentModificationException;
+import java.util.*;
 import java.util.List;
 import javax.swing.JOptionPane;
 
@@ -13,6 +11,9 @@ public class UnoGUI extends JFrame {
     private List<Player> players;
     private Player currentPlayer;
     private List<Card> deck;
+    private List<Card> flippedDeck;
+
+    private List<Card> currentDeck;
     private Card topCard;
     private int playerCount = 0;
     private volatile Boolean numPlayersSelected = false;
@@ -28,6 +29,8 @@ public class UnoGUI extends JFrame {
     private Boolean cardPlayed = false;
     private Boolean draw2Played = false;
     private Boolean draw4Played = false;
+
+    private boolean flipMode = false;
     private int numDraws = 0; // this is used for keeping track of the amount of card draws for DRAW2 and DRAW4
     public Boolean reverse = false;
     public Boolean skip = false;
@@ -35,6 +38,8 @@ public class UnoGUI extends JFrame {
     public UnoGUI() {
         players = new ArrayList<>();
         deck = createDeck();
+        flippedDeck = createFlippedDeck();
+        currentDeck = new ArrayList<>(deck);
         shuffleDeck(deck);
         currentPlayer = players.isEmpty() ? null : players.get(0);
 
@@ -53,11 +58,19 @@ public class UnoGUI extends JFrame {
         List<Card> deck = new ArrayList<>();
 
         for (Card.Suit suit : Card.Suit.values()) {
-            for (Card.Rank rank : Card.Rank.values()) {
-                deck.add(new Card(rank, suit));
+            if (suit == Card.Suit.PINK || suit == Card.Suit.TEAL || suit == Card.Suit.PURPLE || suit == Card.Suit.ORANGE) {
+                for (Card.Rank rank : Card.Rank.values()) {
+                    if (rank == Card.Rank.FLIP) {
+                        deck.add(new Card(rank, suit));
+                    } else if (rank != Card.Rank.DRAW2 && rank != Card.Rank.DRAW4 && rank != Card.Rank.WILD) {
+                        // Include other ranks if needed, excluding DRAW2, DRAW4, and WILD
+                        deck.add(new Card(rank, suit));
+                    }
+                }
             }
         }
 
+        Collections.shuffle(deck);
         // Add more cards or adjust the deck creation logic based on Uno rules
 
         return deck;
@@ -151,30 +164,19 @@ public class UnoGUI extends JFrame {
             players.add(new Player("Player " + (i + 1)));
         }
     }
-
-    public void switchToFlipDeck() {
-        deck.clear();
-        deck.addAll(createFlipDeck());
-        shuffleDeck(deck);
-        updateCardVisibility();
-    }
-
-    public List<Card> createFlipDeck() {
-        List<Card> flipDeck = new ArrayList<>();
-
-        // Add Uno Flip cards to the deck
+    private List<Card> createFlippedDeck() {
+        List<Card> deck = new ArrayList<>();
         for (Card.Suit suit : Card.Suit.values()) {
+            if (suit != Card.Suit.YELLOW && suit != Card.Suit.BLUE && suit != Card.Suit.RED && suit != Card.Suit.GREEN) {
+                for (Card.Rank rank : Card.Rank.values()) {
+                    deck.add(new Card(rank, suit));
+                }
+            }
 
-            // Handle case where image is not found
-            System.out.println("Image Not Found for FLIP card");
-            flipDeck.add(new Card(Card.Rank.FLIP, suit));  // Add FLIP card without image
-
-
-            // Add other Uno Flip cards if necessary
         }
-
-        return flipDeck;
+        return deck;
     }
+
 
     private void startGame() {
         nextPlayerButton.setEnabled(false);
@@ -285,7 +287,7 @@ public class UnoGUI extends JFrame {
             draw4Played = true;
         } else if (topCard.getRank() == Card.Rank.FLIP) {
             System.out.println("Special card detected: FLIP");
-            switchToFlipDeck();
+
         }else if (topCard.getRank() == Card.Rank.REVERSE) {
             System.out.println("Special card detected: REVERSE");
             reverse = !reverse;
@@ -302,6 +304,11 @@ public class UnoGUI extends JFrame {
         if (selectedCard.getRank() == Card.Rank.WILD || selectedCard.getRank() == Card.Rank.DRAW4) {
             topCard = selectedCard;
             promptForColorGUI();
+        }
+
+        if (selectedCard.getRank() == Card.Rank.FLIP) {
+            toggleDeck();
+            updatePlayersHands(); // Implement this method to update player hands accordingly
         }
 
         if (currentPlayer.isValidPlay(selectedCard, topCard)) {
@@ -347,6 +354,49 @@ public class UnoGUI extends JFrame {
             default:
                 break;
         }
+    }
+
+    public void updatePlayersHands() {
+        for (Player player : players) {
+            List<Card> updatedHand = new ArrayList<>();
+
+            for (Card playerCard : player.getHand()) {
+                // Find the corresponding card in the current deck
+                Card matchingCard = findMatchingCard(playerCard);
+
+                if (matchingCard != null) {
+                    updatedHand.add(matchingCard);
+                } else {
+                    // Handle the case where the card is not found
+                    // You might want to keep it as is or replace it with a default card
+                    updatedHand.add(playerCard);
+                }
+            }
+
+            // Update the player's hand
+            player.setHand(updatedHand);
+        }
+    }
+
+    private Card findMatchingCard(Card playerCard) {
+        // Iterate through the current deck to find a card with the same rank and suit
+        for (Card deckCard : currentDeck) {
+            if (deckCard.getRank() == playerCard.getRank() && deckCard.getSuit() == playerCard.getSuit()) {
+                return deckCard;
+            }
+        }
+        return null; // Card not found in the current deck
+    }
+
+    private void toggleDeck() {
+        if (currentDeck == deck) {
+            currentDeck = new ArrayList<>(flippedDeck);
+        } else {
+            currentDeck = new ArrayList<>(deck);
+        }
+
+        updatePlayersHands();
+        displayPlayerHand();
     }
 
     private void setupCardVisibility() {
@@ -499,6 +549,7 @@ public class UnoGUI extends JFrame {
             }
         });
 
+
         drawCardButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -506,6 +557,7 @@ public class UnoGUI extends JFrame {
                 drawCard();
             }
         });
+
 
         nextPlayerButton.addActionListener(new ActionListener() {
             @Override
