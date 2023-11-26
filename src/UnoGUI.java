@@ -61,7 +61,7 @@ public class UnoGUI extends JFrame {
                 // Include other ranks if needed, excluding DRAW2, DRAW4, and WILD
                 for (Card.Rank rank : Arrays.asList(Card.Rank.DEUCE, Card.Rank.THREE, Card.Rank.FOUR, Card.Rank.FIVE,
                         Card.Rank.SIX, Card.Rank.SEVEN, Card.Rank.EIGHT, Card.Rank.NINE, Card.Rank.SKIP,
-                        Card.Rank.REVERSE, Card.Rank.DRAW4, Card.Rank.WILD)) {
+                        Card.Rank.REVERSE, Card.Rank.DRAW2, Card.Rank.DRAW4, Card.Rank.WILD)) {
                     deck.add(new Card(rank, suit));
                 }
 
@@ -354,6 +354,9 @@ public class UnoGUI extends JFrame {
                 if(card.getSuit() == Card.Suit.YELLOW) {
                     card.setSuit(Card.Suit.PINK);
                 }
+                if(card.getRank() == Card.Rank.DRAW4) {
+                    card.setRank(Card.Rank.DRAW_COLOUR);
+                }
                 if(card.getRank() == Card.Rank.DRAW2) {
                     card.setRank(Card.Rank.DRAW5);
                 }
@@ -374,6 +377,9 @@ public class UnoGUI extends JFrame {
             }
             if(card.getSuit() == Card.Suit.YELLOW) {
                 card.setSuit(Card.Suit.PINK);
+            }
+            if(card.getRank() == Card.Rank.DRAW4) {
+                card.setRank(Card.Rank.DRAW_COLOUR);
             }
             if(card.getRank() == Card.Rank.DRAW2) {
                 card.setRank(Card.Rank.DRAW5);
@@ -399,6 +405,9 @@ public class UnoGUI extends JFrame {
                 if(card.getSuit() == Card.Suit.PINK) {
                     card.setSuit(Card.Suit.YELLOW);
                 }
+                if(card.getRank() == Card.Rank.DRAW_COLOUR) {
+                    card.setRank(Card.Rank.DRAW4);
+                }
                 if(card.getRank() == Card.Rank.DRAW5) {
                     card.setRank(Card.Rank.DRAW2);
                 }
@@ -419,6 +428,9 @@ public class UnoGUI extends JFrame {
             }
             if(card.getSuit() == Card.Suit.PINK) {
                 card.setSuit(Card.Suit.YELLOW);
+            }
+            if(card.getRank() == Card.Rank.DRAW_COLOUR) {
+                card.setRank(Card.Rank.DRAW4);
             }
             if(card.getRank() == Card.Rank.DRAW5) {
                 card.setRank(Card.Rank.DRAW2);
