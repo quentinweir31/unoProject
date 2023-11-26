@@ -8,7 +8,7 @@ public class Card {
     /**
      * Enumeration of card ranks.
      */
-    public enum Rank {DEUCE, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, SKIP, REVERSE, WILD, FLIP, DRAW2, DRAW4, DRAW5, SKIP_EVERYONE}
+    public enum Rank {DEUCE, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, SKIP, REVERSE, WILD, FLIP, DRAW2, DRAW4, DRAW5, DRAW_COLOUR, SKIP_EVERYONE}
 
     /**
      * Enumeration of card suits.
