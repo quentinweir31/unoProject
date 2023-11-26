@@ -8,7 +8,7 @@ public class Card {
     /**
      * Enumeration of card ranks.
      */
-    public enum Rank {DEUCE, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, SKIP, REVERSE, WILD,FLIP, DRAW2, DRAW4}
+    public enum Rank {DEUCE, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, SKIP, REVERSE, WILD, FLIP, DRAW2, DRAW4, DRAW5, SKIP_EVERYONE}
 
     /**
      * Enumeration of card suits.
@@ -61,7 +61,7 @@ public class Card {
             default: throw new IllegalArgumentException("No such suit!");
         }
     }
-    private final Rank rank;
+    private Rank rank;
     private Suit suit;
 
     private static boolean isFlipped = false;
@@ -116,6 +116,10 @@ public class Card {
 
     public void setSuit(Suit newSuit) {
         this.suit = newSuit;
+    }
+
+    public void setRank(Rank newRank) {
+        this.rank = newRank;
     }
 
 
