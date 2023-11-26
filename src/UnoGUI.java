@@ -25,7 +25,6 @@ public class UnoGUI extends JFrame {
     private Boolean moveMade = false;
     private JButton nextPlayerButton;
     private JButton drawCardButton;
-    private JButton flipButton;
     private Boolean cardPlayed = false;
     private Boolean draw2Played = false;
     private Boolean draw4Played = false;
@@ -62,7 +61,7 @@ public class UnoGUI extends JFrame {
                 // Include other ranks if needed, excluding DRAW2, DRAW4, and WILD
                 for (Card.Rank rank : Arrays.asList(Card.Rank.DEUCE, Card.Rank.THREE, Card.Rank.FOUR, Card.Rank.FIVE,
                         Card.Rank.SIX, Card.Rank.SEVEN, Card.Rank.EIGHT, Card.Rank.NINE, Card.Rank.SKIP,
-                        Card.Rank.REVERSE, Card.Rank.WILD)) {
+                        Card.Rank.REVERSE, Card.Rank.DRAW4, Card.Rank.WILD)) {
                     deck.add(new Card(rank, suit));
                 }
 
