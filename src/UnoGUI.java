@@ -295,6 +295,9 @@ public class UnoGUI extends JFrame {
         } else if (topCard.getRank() == Card.Rank.SKIP) {
             System.out.println("Special card detected: SKIP");
             skip = true;
+        } else if (topCard.getRank() == Card.Rank.FLIP) {
+            System.out.println("Special card detected: FLIP");
+
         }
 
         // Set the updated top card after handling special cards
@@ -305,6 +308,15 @@ public class UnoGUI extends JFrame {
         if (selectedCard.getRank() == Card.Rank.WILD || selectedCard.getRank() == Card.Rank.DRAW4) {
             topCard = selectedCard;
             promptForColorGUI();
+        }
+        if(selectedCard.getRank() == Card.Rank.FLIP) {
+            topCard = selectedCard;
+            flipMode = !flipMode;
+            if(flipMode) {
+                changeToFlip();
+            } else {
+                changeToNonFlip();
+            }
         }
 
         if (selectedCard.getRank() == Card.Rank.FLIP) {
@@ -325,6 +337,96 @@ public class UnoGUI extends JFrame {
 
         } else {
             System.out.println("Invalid play. The selected card cannot be played.");
+        }
+    }
+    private void changeToFlip() {
+        //iterate through all the players' hands and the deck to flip the cards
+        for(Player player : players) {
+            for(Card card : player.getHand()) {
+                if(card.getSuit() == Card.Suit.RED) {
+                    card.setSuit(Card.Suit.TEAL);
+                }
+                if(card.getSuit() == Card.Suit.BLUE) {
+                    card.setSuit(Card.Suit.ORANGE);
+                }
+                if(card.getSuit() == Card.Suit.GREEN) {
+                    card.setSuit(Card.Suit.PURPLE);
+                }
+                if(card.getSuit() == Card.Suit.YELLOW) {
+                    card.setSuit(Card.Suit.PINK);
+                }
+                if(card.getRank() == Card.Rank.DRAW2) {
+                    card.setRank(Card.Rank.DRAW5);
+                }
+                if(card.getRank() == Card.Rank.SKIP) {
+                    card.setRank(Card.Rank.SKIP_EVERYONE);
+                }
+            }
+        }
+        for(Card card : deck) {
+            if(card.getSuit() == Card.Suit.RED) {
+                card.setSuit(Card.Suit.TEAL);
+            }
+            if(card.getSuit() == Card.Suit.BLUE) {
+                card.setSuit(Card.Suit.ORANGE);
+            }
+            if(card.getSuit() == Card.Suit.GREEN) {
+                card.setSuit(Card.Suit.PURPLE);
+            }
+            if(card.getSuit() == Card.Suit.YELLOW) {
+                card.setSuit(Card.Suit.PINK);
+            }
+            if(card.getRank() == Card.Rank.DRAW2) {
+                card.setRank(Card.Rank.DRAW5);
+            }
+            if(card.getRank() == Card.Rank.SKIP) {
+                card.setRank(Card.Rank.SKIP_EVERYONE);
+            }
+        }
+    }
+    private void changeToNonFlip() {
+        //iterate through all the players' hands and the deck to flip the cards
+        for(Player player : players) {
+            for(Card card : player.getHand()) {
+                if(card.getSuit() == Card.Suit.TEAL) {
+                    card.setSuit(Card.Suit.RED);
+                }
+                if(card.getSuit() == Card.Suit.ORANGE) {
+                    card.setSuit(Card.Suit.BLUE);
+                }
+                if(card.getSuit() == Card.Suit.PURPLE) {
+                    card.setSuit(Card.Suit.GREEN);
+                }
+                if(card.getSuit() == Card.Suit.PINK) {
+                    card.setSuit(Card.Suit.YELLOW);
+                }
+                if(card.getRank() == Card.Rank.DRAW5) {
+                    card.setRank(Card.Rank.DRAW2);
+                }
+                if(card.getRank() == Card.Rank.SKIP_EVERYONE) {
+                    card.setRank(Card.Rank.SKIP);
+                }
+            }
+        }
+        for(Card card : deck) {
+            if(card.getSuit() == Card.Suit.TEAL) {
+                card.setSuit(Card.Suit.RED);
+            }
+            if(card.getSuit() == Card.Suit.ORANGE) {
+                card.setSuit(Card.Suit.BLUE);
+            }
+            if(card.getSuit() == Card.Suit.PURPLE) {
+                card.setSuit(Card.Suit.GREEN);
+            }
+            if(card.getSuit() == Card.Suit.PINK) {
+                card.setSuit(Card.Suit.YELLOW);
+            }
+            if(card.getRank() == Card.Rank.DRAW5) {
+                card.setRank(Card.Rank.DRAW2);
+            }
+            if(card.getRank() == Card.Rank.SKIP_EVERYONE) {
+                card.setRank(Card.Rank.SKIP);
+            }
         }
     }
     private void promptForColorGUI() {
