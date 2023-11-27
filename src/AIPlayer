@@ -16,14 +16,22 @@ public class AIPlayer extends Player {
     public Card chooseCardToPlay(Card topCard) {
         List<Card> legalMoves = getLegalMoves(topCard);
 
-        if (!legalMoves.isEmpty()) {
-            // In a real implementation, you might have a more sophisticated strategy.
-            // For simplicity, let's just choose the first legal move.
-            return legalMoves.get(0);
-        } else {
-            // If no legal moves, draw a card.
-            return null;
+        // Check for regular cards with the same color
+        for (Card card : legalMoves) {
+            if (card.matchesColor(topCard)) {
+                return card;
+            }
         }
+
+        // Check for regular cards with the same number
+        for (Card card : legalMoves) {
+            if (card.matchesNumber(topCard)) {
+                return card;
+            }
+        }
+
+        // If no suitable cards, draw a card
+        return null;
     }
 
     private List<Card> getLegalMoves(Card topCard) {
