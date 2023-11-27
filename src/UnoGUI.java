@@ -231,14 +231,14 @@ public class UnoGUI extends JFrame {
                     }
                 }
             }
-            if(skipAll) {
-                currentPlayer = players.get(currentPlayerIndex);
-                updateCurrentPlayerLabel();
-            }
-            skipAll = false;
+
             skip = false;
             currentPlayer = players.get(currentPlayerIndex);
             updateCurrentPlayerLabel();
+            if(!skipAll){
+                displayTopCard();
+            }
+            skipAll = false;
             numDraws = 0;
         }
     }
@@ -311,9 +311,12 @@ public class UnoGUI extends JFrame {
     }
 
     private void handleCardButtonClick(Card selectedCard) {
-        if (selectedCard.getRank() == Card.Rank.WILD || selectedCard.getRank() == Card.Rank.DRAW4) {
+        if ((selectedCard.getRank() == Card.Rank.WILD || selectedCard.getRank() == Card.Rank.DRAW4) && !flipMode) {
             topCard = selectedCard;
             promptForColorGUI();
+        }
+        if(selectedCard.getRank() == Card.Rank.WILD && flipMode) {
+            promptForFlipColorGUI();
         }
         if(selectedCard.getRank() == Card.Rank.SKIP_EVERYONE && currentPlayer.isValidPlay(selectedCard, topCard)) {
             topCard = selectedCard;
@@ -433,37 +436,34 @@ public class UnoGUI extends JFrame {
                 break;
         }
     }
+    private void promptForFlipColorGUI() {
+        String[] options = {"PINK", "TEAL", "ORANGE", "PURPLE"};
+        int choice = JOptionPane.showOptionDialog(
+                this,
+                "Choose a color for the WILD card:",
+                "WILD Card Color",
+                JOptionPane.DEFAULT_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                options,
+                options[0]);
 
-    public void updatePlayersHands() {
-        for (Player player : players) {
-            List<Card> updatedHand = new ArrayList<>();
-
-            for (Card playerCard : player.getHand()) {
-                // Find the corresponding card in the current deck
-                Card matchingCard = findMatchingCard(playerCard);
-
-                if (matchingCard != null) {
-                    updatedHand.add(matchingCard);
-                } else {
-                    // Handle the case where the card is not found
-                    // You might want to keep it as is or replace it with a default card
-                    updatedHand.add(playerCard);
-                }
-            }
-
-            // Update the player's hand
-            player.setHand(updatedHand);
+        switch (choice) {
+            case 0:
+                topCard.setSuit(Card.Suit.PINK);
+                break;
+            case 1:
+                topCard.setSuit(Card.Suit.TEAL);
+                break;
+            case 2:
+                topCard.setSuit(Card.Suit.ORANGE);
+                break;
+            case 3:
+                topCard.setSuit(Card.Suit.PURPLE);
+                break;
+            default:
+                break;
         }
-    }
-
-    private Card findMatchingCard(Card playerCard) {
-        // Iterate through the current deck to find a card with the same rank and suit
-        for (Card deckCard : currentDeck) {
-            if (deckCard.getRank() == playerCard.getRank() && deckCard.getSuit() == playerCard.getSuit()) {
-                return deckCard;
-            }
-        }
-        return null; // Card not found in the current deck
     }
 
     private void setupCardVisibility() {
@@ -637,7 +637,7 @@ public class UnoGUI extends JFrame {
                     cardPlayed = false;
                     displayPlayerHand();
                     updateCardVisibility();
-                    displayTopCard();
+                    //displayTopCard();
                     nextPlayerButton.setEnabled(false);
                 } else if(moveMade && !draw4Played){
                     checkForWinner();
@@ -650,7 +650,6 @@ public class UnoGUI extends JFrame {
                     displayTopCard();
                     nextPlayerButton.setEnabled(false);
                 }
-
             }
         });
 
