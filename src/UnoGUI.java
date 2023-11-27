@@ -107,15 +107,8 @@ public class UnoGUI extends JFrame {
         threeHumanPlayer.setPreferredSize(menuBar.getPreferredSize());
         fourHumanPlayer.setPreferredSize(menuBar.getPreferredSize());
 
-        // Dropdown for AI players
-        JMenu aiDropDown = new JMenu("Select number of AI players");
-        JMenuItem oneAiPlayer = new JMenuItem("1");
-        JMenuItem twoAiPlayer = new JMenuItem("2");
-        aiDropDown.add(oneAiPlayer);
-        aiDropDown.add(twoAiPlayer);
-        menuBar.add(aiDropDown);
-        oneAiPlayer.setPreferredSize(menuBar.getPreferredSize());
-        twoAiPlayer.setPreferredSize(menuBar.getPreferredSize());
+
+
 
         JButton startButton = new JButton("Start Game");
         JButton closeButton = new JButton("Close");
@@ -157,26 +150,26 @@ public class UnoGUI extends JFrame {
             }
         });
 
-        oneAiPlayer.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String selectedNumber = ((JMenuItem) e.getSource()).getText();
-                aiPlayerCount = Integer.parseInt(selectedNumber);
-                numPlayersSelected = true;
-                aiDropDown.setText(aiPlayerCount + " AI Players");
-            }
-        });
+        JMenu aiDropDown = new JMenu("Select number of AI players");
 
-        // For two AI players
-        twoAiPlayer.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String selectedNumber = ((JMenuItem) e.getSource()).getText();
-                aiPlayerCount = Integer.parseInt(selectedNumber);
-                numPlayersSelected = true;
-                aiDropDown.setText(aiPlayerCount + " AI Players");
-            }
-        });
+        // Dynamically add AI player options
+        for (int i = 1; i <= 15; i++) {
+            JMenuItem aiPlayerItem = new JMenuItem(Integer.toString(i));
+            aiDropDown.add(aiPlayerItem);
+            aiPlayerItem.setPreferredSize(menuBar.getPreferredSize());
+
+            aiPlayerItem.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    String selectedNumber = ((JMenuItem) e.getSource()).getText();
+                    aiPlayerCount = Integer.parseInt(selectedNumber);
+                    numPlayersSelected = true;
+                    aiDropDown.setText(aiPlayerCount + " AI Players");
+                }
+            });
+        }
+
+        menuBar.add(aiDropDown);
 
 
         playerRangePanel.setLayout(new FlowLayout());
@@ -259,8 +252,14 @@ public class UnoGUI extends JFrame {
         }
         for (AIPlayer aiPlayer : aiPlayers) {
             for (int i = 0; i < 7; i++) {  // Distribute 7 cards to each AI player
-                Card drawnCard = deck.remove(0);
-                aiPlayer.addToHand(drawnCard);
+                if (!deck.isEmpty()) {
+                    Card drawnCard = deck.remove(0);
+                    aiPlayer.addToHand(drawnCard);
+                } else {
+                    // Handle the case when the deck is empty
+                    System.out.println("Deck is empty. Cannot distribute more cards.");
+                    break; // Exit the loop if the deck is empty
+                }
             }
         }
 
@@ -396,43 +395,6 @@ public class UnoGUI extends JFrame {
 
         // Start a new game or perform any other initialization steps
         startGame();
-    }
-    private void handleSpecialCards(Card topCard) {
-
-        if (topCard.getRank() == Card.Rank.WILD) {
-//            System.out.println("Special card detected: WILD");
-//
-//            // Prompt the user to choose a color using a GUI dialog
-//            char chosenColor = promptForColorGUI();
-//
-//            // Update the suit of the WILD card
-//            topCard.setSuit(chosenColor);
-
-            System.out.println("Top card after handling WILD: " + topCard);
-        } else if (topCard.getRank() == Card.Rank.DRAW2) {
-            System.out.println("Special card detected: DRAW2");
-
-            // Simulate the logic for DRAW2 cards (you might want to implement specific rules)
-            draw2Played = true;
-
-
-            // Additional logic for handling DRAW2 cards can be added here
-        } else if (topCard.getRank() == Card.Rank.DRAW4) {
-            System.out.println("Special card detected: DRAW4");
-            draw4Played = true;
-        } else if (topCard.getRank() == Card.Rank.FLIP) {
-            System.out.println("Special card detected: FLIP");
-
-        }else if (topCard.getRank() == Card.Rank.REVERSE) {
-            System.out.println("Special card detected: REVERSE");
-            reverse = !reverse;
-        } else if (topCard.getRank() == Card.Rank.SKIP) {
-            System.out.println("Special card detected: SKIP");
-            skip = true;
-        }
-
-        // Set the updated top card after handling special cards
-        this.topCard = topCard;
     }
 
     private void handleCardButtonClick(Card selectedCard) {
