@@ -326,6 +326,55 @@ public class UnoGUI extends JFrame {
         for (Player player : players) {
             if (player.getHand().isEmpty()) {
                 String winnerMessage = player.getName() + " wins the game!";
+                //loop through each player and add up the scores
+                for(Player gamer : players) {
+                    Integer score = 0;
+                    for(Card card : gamer.getHand()) {
+                        if(card.getRank() == Card.Rank.DEUCE) {
+                            score += 2;
+                        }
+                        else if(card.getRank() == Card.Rank.THREE) {
+                            score += 3;
+                        }
+                        else if(card.getRank() == Card.Rank.FOUR) {
+                            score += 4;
+                        }
+                        else if(card.getRank() == Card.Rank.FIVE) {
+                            score += 5;
+                        }
+                        else if(card.getRank() == Card.Rank.SIX) {
+                            score += 6;
+                        }
+                        else if(card.getRank() == Card.Rank.SEVEN) {
+                            score += 7;
+                        }
+                        else if(card.getRank() == Card.Rank.EIGHT) {
+                            score += 8;
+                        }
+                        else if(card.getRank() == Card.Rank.NINE) {
+                            score += 9;
+                        }
+                        else if(card.getRank() == Card.Rank.DRAW2) {
+                            score += 10;
+                        }
+                        else if(card.getRank() == Card.Rank.DRAW5 || card.getRank() == Card.Rank.REVERSE || card.getRank() == Card.Rank.SKIP || card.getRank() == Card.Rank.FLIP) {
+                            score += 20;
+                        }
+                        else if(card.getRank() == Card.Rank.SKIP_EVERYONE) {
+                            score += 30;
+                        }
+                        else if(card.getRank() == Card.Rank.WILD) {
+                            score += 40;
+                        }
+                        else if(card.getRank() == Card.Rank.DRAW4) {
+                            score += 50;
+                        }
+                        else if(card.getRank() == Card.Rank.DRAW_COLOUR) {
+                            score += 60;
+                        }
+                    }
+                    winnerMessage += "\n" + gamer.getName() + " has score " + score.toString();
+                }
                 JOptionPane.showMessageDialog(this, winnerMessage);
                 System.out.println(player.getName() + " wins the game!");
                 restartGame();
