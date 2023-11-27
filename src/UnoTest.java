@@ -192,6 +192,9 @@ public class UnoTest {
     }
 
 
+    /**
+     * Test case to verify the behavior of determineMove method in AIPlayer class.
+     */
     @Test
     void determineMoveTest() {
         // Create an AIPlayer
