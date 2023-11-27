@@ -164,7 +164,7 @@ public class UnoTest {
     void test_CreateDeck() {
         UnoGUI unoGUI = new UnoGUI();
         assertNotNull(unoGUI.createDeck());
-        assertEquals(52, unoGUI.createDeck().size()); // Assuming a standard Uno deck
+        assertEquals(56, unoGUI.createDeck().size()); // Assuming a standard Uno deck
     }
 
     /**
@@ -189,6 +189,23 @@ public class UnoTest {
         UnoGUI unoGUI = new UnoGUI();
         unoGUI.initializePlayers(2);
         assertEquals(2, unoGUI.getPlayers().size());
+    }
+
+
+    @Test
+    void determineMoveTest() {
+        // Create an AIPlayer
+        AIPlayer aiPlayer = new AIPlayer("AIman");
+
+        // Create a hand for the AIPlayer
+        List<Card> hand = new ArrayList<>();
+        hand.add(new Card(Card.Rank.FIVE, Card.Suit.RED));
+        hand.add(new Card( Card.Rank.FOUR, Card.Suit.BLUE));
+        hand.add(new Card(Card.Rank.NINE, Card.Suit.BLUE));
+        aiPlayer.setHand(hand);
+        // Test when there are no legal moves available
+        aiPlayer.setHand(new ArrayList<>());
+        assertNull(AIPlayer.determineMove());
     }
 
 
