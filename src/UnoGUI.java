@@ -852,6 +852,7 @@ public class UnoGUI extends JFrame {
                     updateCardVisibility();
                     nextPlayerButton.setEnabled(false);
                 }
+                drawCardButton.setEnabled(true);
                 revalidate();
                 repaint();
             }
@@ -982,15 +983,16 @@ public class UnoGUI extends JFrame {
             if (drawnCard != null) {
                 String message = aiPlayer.getName() + " draws a card: " + drawnCard;
                 JOptionPane.showMessageDialog(this, message);
+
                 // Handle special card effects if needed
+
                 moveMade = true;
             }
         }
 
         // Enable the nextPlayerButton after the AI player's turn
         nextPlayerButton.setEnabled(true);
-         // Move to the next player after AI's turn
-
+        moveToNextPlayer();
     }
 
     /**
