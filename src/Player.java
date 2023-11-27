@@ -11,6 +11,10 @@ import java.util.Collections;
 public class Player {
     private String name;
     private List<Card> hand;
+    private boolean isHuman;
+    private boolean hasTakenTurn;
+
+
 
     private int score;
 
@@ -26,6 +30,7 @@ public class Player {
         this.name = name;
         this.hand = new ArrayList<>();
         this.game = game;
+        this.isHuman = true;
         this.score = 0; // Initialize points to 0
 
     }
@@ -46,6 +51,10 @@ public class Player {
      */
     public List<Card> getHand() {
         return hand;
+    }
+
+    public void setHand(List<Card> hand) {
+        this.hand = hand;
     }
 
     /**
@@ -75,6 +84,8 @@ public class Player {
         addToHand(card);
     }
 
+
+
     /**
      * Simulates drawing a card from the deck and adds it to the player's hand.
      *
@@ -93,6 +104,11 @@ public class Player {
             return null;  // or throw an exception, depending on your design
         }
     }
+
+    public boolean hasTakenTurn() {
+        return hasTakenTurn;
+    }
+
 
 
     /**
@@ -148,6 +164,7 @@ public class Player {
         displayHand();
         System.out.println("Top card: " + topCard);
         System.out.println("Score: " + score);
+        hasTakenTurn = true;
         UnoGUI newUno = new UnoGUI();
 
         newUno.checkForWinner();
@@ -192,7 +209,7 @@ public class Player {
 
                 if (selectedCard.getRank() == Card.Rank.FLIP || topCard.getRank() == Card.Rank.FLIP) {
                     System.out.println(name + " plays FLIP! Deck is flipped.");
-                    newUno.switchToFlipDeck();
+
                 }
 
                 if (selectedCard.getRank() == Card.Rank.SKIP || topCard.getRank() == Card.Rank.SKIP) {
@@ -262,8 +279,11 @@ public class Player {
     public boolean isValidPlay(Card selectedCard, Card topCard) {
         return selectedCard.getRank() == topCard.getRank() || selectedCard.getSuit() == topCard.getSuit();
     }
-    }
 
+    public boolean isHuman(boolean isHuman) {
+        return isHuman;
+    }
+}
 
 
 
