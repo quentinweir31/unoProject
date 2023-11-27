@@ -269,59 +269,42 @@ public class UnoGUI extends JFrame {
         // Start a new game or perform any other initialization steps
         startGame();
     }
-    private void handleSpecialCards(Card topCard) {
-
-        if (topCard.getRank() == Card.Rank.WILD) {
-//            System.out.println("Special card detected: WILD");
-//
-//            // Prompt the user to choose a color using a GUI dialog
-//            char chosenColor = promptForColorGUI();
-//
-//            // Update the suit of the WILD card
-//            topCard.setSuit(chosenColor);
-
-            System.out.println("Top card after handling WILD: " + topCard);
-        } else if (topCard.getRank() == Card.Rank.DRAW2) {
-            System.out.println("Special card detected: DRAW2");
-
-            // Simulate the logic for DRAW2 cards (you might want to implement specific rules)
-            draw2Played = true;
-
-
-            // Additional logic for handling DRAW2 cards can be added here
-        } else if (topCard.getRank() == Card.Rank.DRAW4) {
-            System.out.println("Special card detected: DRAW4");
-            draw4Played = true;
-        } else if (topCard.getRank() == Card.Rank.FLIP) {
-            System.out.println("Special card detected: FLIP");
-
-        }else if (topCard.getRank() == Card.Rank.REVERSE) {
-            System.out.println("Special card detected: REVERSE");
-            reverse = !reverse;
-        } else if (topCard.getRank() == Card.Rank.SKIP) {
-            System.out.println("Special card detected: SKIP");
-            skip = true;
-        } else if (topCard.getRank() == Card.Rank.FLIP) {
-            System.out.println("Special card detected: FLIP");
-
-        }
-
-        // Set the updated top card after handling special cards
-        this.topCard = topCard;
-    }
 
     private void handleCardButtonClick(Card selectedCard) {
+        //wild and wild draw4
         if ((selectedCard.getRank() == Card.Rank.WILD || selectedCard.getRank() == Card.Rank.DRAW4) && !flipMode) {
+            if(selectedCard.getRank() == Card.Rank.DRAW4){
+                draw4Played = true;
+            }
             topCard = selectedCard;
             promptForColorGUI();
         }
+        //flipped wild
         if(selectedCard.getRank() == Card.Rank.WILD && flipMode) {
+            topCard = selectedCard;
             promptForFlipColorGUI();
         }
+        //skip_everyone
         if(selectedCard.getRank() == Card.Rank.SKIP_EVERYONE && currentPlayer.isValidPlay(selectedCard, topCard)) {
             topCard = selectedCard;
             skipAll = true;
         }
+        //draw2
+        if(selectedCard.getRank() == Card.Rank.DRAW2 && currentPlayer.isValidPlay(selectedCard, topCard)) {
+            topCard = selectedCard;
+            draw2Played = true;
+        }
+        //skip
+        if(selectedCard.getRank() == Card.Rank.SKIP && currentPlayer.isValidPlay(selectedCard, topCard)) {
+            topCard = selectedCard;
+            skip = true;
+        }
+        //reverse
+        if(selectedCard.getRank() == Card.Rank.REVERSE && currentPlayer.isValidPlay(selectedCard, topCard)) {
+            topCard = selectedCard;
+            reverse = !reverse;
+        }
+        //flip
         if(selectedCard.getRank() == Card.Rank.FLIP && currentPlayer.isValidPlay(selectedCard, topCard)) {
             topCard = selectedCard;
             flipMode = !flipMode;
@@ -331,10 +314,9 @@ public class UnoGUI extends JFrame {
                 changeToNonFlip();
             }
         }
-
+        //numbered
         if (currentPlayer.isValidPlay(selectedCard, topCard)) {
             topCard = selectedCard;
-            handleSpecialCards(topCard);
             currentPlayer.removeFromHand(currentPlayer.getHand().indexOf(selectedCard));
             moveMade = true;
             cardPlayed = true;
