@@ -5,6 +5,8 @@
 public class Card {
 
 
+    private static Rank color;
+
     /**
      * Enumeration of card ranks.
      */
@@ -84,6 +86,10 @@ public class Card {
         this(getRankFromAbbrev(s.charAt(0)), getSuitFromAbbrev(s.charAt(1)));
     }
 
+
+    private Card.Suit currentColor;
+
+    private Card.Rank currentNumber;
     /**
      * Constructs a Card instance with the specified rank and suit.
      *
@@ -121,6 +127,15 @@ public class Card {
     public void setRank(Rank newRank) {
         this.rank = newRank;
     }
+
+    public boolean matchesColor(Card card) {
+        return card.getSuit() == currentColor;
+    }
+
+    public boolean matchesNumber(Card card) {
+        return card.getRank() == currentNumber || card.getRank() == Rank.WILD;
+    }
+
 
 
 
