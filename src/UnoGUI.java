@@ -617,9 +617,7 @@ public class UnoGUI extends JFrame {
                     moveToNextPlayer();
                     moveMade = false;
                     cardPlayed = false;
-                    displayPlayerHand();
                     updateCardVisibility();
-                    //displayTopCard();
                     nextPlayerButton.setEnabled(false);
                 } else if(moveMade && !draw4Played){
                     checkForWinner();
@@ -627,11 +625,11 @@ public class UnoGUI extends JFrame {
                     moveToNextPlayer();
                     moveMade = false;
                     cardPlayed = false;
-                    displayPlayerHand();
                     updateCardVisibility();
-                    displayTopCard();
                     nextPlayerButton.setEnabled(false);
                 }
+                revalidate();
+                repaint();
             }
         });
 
