@@ -11,10 +11,17 @@ public class UnoGUI extends JFrame {
     private List<Player> players;
     private Player currentPlayer;
     private List<Card> deck;
+
+    private List<AIPlayer> aiPlayers;
     private List<Card> flippedDeck;
+
     private List<Card> currentDeck;
     private Card topCard;
+
+    private AIPlayer aiPlayer;
     private int playerCount = 0;
+
+    private int aiPlayerCount = 0;
     private volatile Boolean numPlayersSelected = false;
     private int currentPlayerIndex = 0;
     private JPanel playerHandPanel;
@@ -22,6 +29,8 @@ public class UnoGUI extends JFrame {
     private JPanel topCardPanel;
     private JLabel currentPlayerLabel;
     private Boolean moveMade = false;
+
+    private boolean isHumanTurn;
     private JButton nextPlayerButton;
     private JButton drawCardButton;
     private Boolean cardPlayed = false;
@@ -38,7 +47,10 @@ public class UnoGUI extends JFrame {
         deck = createDeck();
         flippedDeck = createFlippedDeck();
         currentDeck = new ArrayList<>(deck);
+        aiPlayer = new AIPlayer("AI Player");
+        aiPlayers = new ArrayList<>();
         shuffleDeck(currentDeck);
+        playRound();
         currentPlayer = players.isEmpty() ? null : players.get(0);
 
         setTitle("Uno Game");
@@ -60,7 +72,7 @@ public class UnoGUI extends JFrame {
                 // Include other ranks if needed, excluding DRAW2, DRAW4, and WILD
                 for (Card.Rank rank : Arrays.asList(Card.Rank.DEUCE, Card.Rank.THREE, Card.Rank.FOUR, Card.Rank.FIVE,
                         Card.Rank.SIX, Card.Rank.SEVEN, Card.Rank.EIGHT, Card.Rank.NINE, Card.Rank.SKIP,
-                        Card.Rank.REVERSE, Card.Rank.DRAW2, Card.Rank.DRAW4, Card.Rank.WILD)) {
+                        Card.Rank.REVERSE, Card.Rank.WILD)) {
                     deck.add(new Card(rank, suit));
                 }
 
@@ -81,49 +93,92 @@ public class UnoGUI extends JFrame {
 
     private void setupPlayerRange() {
         JMenuBar menuBar = new JMenuBar();
-        JMenu dropDown = new JMenu("Select number of players");
-        JMenuItem twoPlayer = new JMenuItem("2");
-        JMenuItem threePlayer = new JMenuItem("3");
-        JMenuItem fourPlayer = new JMenuItem("4");
-        dropDown.add(twoPlayer);
-        dropDown.add(threePlayer);
-        dropDown.add(fourPlayer);
-        menuBar.add(dropDown);
-        twoPlayer.setPreferredSize(menuBar.getPreferredSize());
-        threePlayer.setPreferredSize(menuBar.getPreferredSize());
-        fourPlayer.setPreferredSize(menuBar.getPreferredSize());
 
-        twoPlayer.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String selectedNumber = ((JMenuItem) e.getSource()).getText();
-                playerCount = Integer.parseInt(selectedNumber);
-                numPlayersSelected = true;
-                dropDown.setText(playerCount + " Players");
-            }
-        });
-        threePlayer.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String selectedNumber = ((JMenuItem) e.getSource()).getText();
-                playerCount = Integer.parseInt(selectedNumber);
-                numPlayersSelected = true;
-                dropDown.setText(playerCount + " Players");
-            }
-        });
-        fourPlayer.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String selectedNumber = ((JMenuItem) e.getSource()).getText();
-                playerCount = Integer.parseInt(selectedNumber);
-                numPlayersSelected = true;
-                dropDown.setText(playerCount + " Players");
-            }
-        });
+        // Dropdown for human players
+        JMenu humanDropDown = new JMenu("Select number of human players");
+        JMenuItem twoHumanPlayer = new JMenuItem("2");
+        JMenuItem threeHumanPlayer = new JMenuItem("3");
+        JMenuItem fourHumanPlayer = new JMenuItem("4");
+        humanDropDown.add(twoHumanPlayer);
+        humanDropDown.add(threeHumanPlayer);
+        humanDropDown.add(fourHumanPlayer);
+        menuBar.add(humanDropDown);
+        twoHumanPlayer.setPreferredSize(menuBar.getPreferredSize());
+        threeHumanPlayer.setPreferredSize(menuBar.getPreferredSize());
+        fourHumanPlayer.setPreferredSize(menuBar.getPreferredSize());
+
+        // Dropdown for AI players
+        JMenu aiDropDown = new JMenu("Select number of AI players");
+        JMenuItem oneAiPlayer = new JMenuItem("1");
+        JMenuItem twoAiPlayer = new JMenuItem("2");
+        aiDropDown.add(oneAiPlayer);
+        aiDropDown.add(twoAiPlayer);
+        menuBar.add(aiDropDown);
+        oneAiPlayer.setPreferredSize(menuBar.getPreferredSize());
+        twoAiPlayer.setPreferredSize(menuBar.getPreferredSize());
 
         JButton startButton = new JButton("Start Game");
         JButton closeButton = new JButton("Close");
         JPanel playerRangePanel = new JPanel();
+        playerRangePanel.setLayout(new FlowLayout());
+        playerRangePanel.add(menuBar);
+        playerRangePanel.add(startButton);
+        playerRangePanel.add(closeButton);
+
+        add(playerRangePanel, BorderLayout.WEST);
+        setSize(400, 150);
+        setResizable(false);
+
+        twoHumanPlayer.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String selectedNumber = ((JMenuItem) e.getSource()).getText();
+                playerCount = Integer.parseInt(selectedNumber);
+                numPlayersSelected = true;
+                humanDropDown.setText(playerCount + " Players");
+            }
+        });
+        threeHumanPlayer.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String selectedNumber = ((JMenuItem) e.getSource()).getText();
+                playerCount = Integer.parseInt(selectedNumber);
+                numPlayersSelected = true;
+                humanDropDown.setText(playerCount + " Players");
+            }
+        });
+        fourHumanPlayer.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String selectedNumber = ((JMenuItem) e.getSource()).getText();
+                playerCount = Integer.parseInt(selectedNumber);
+                numPlayersSelected = true;
+                humanDropDown.setText(playerCount + " Players");
+            }
+        });
+
+        oneAiPlayer.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String selectedNumber = ((JMenuItem) e.getSource()).getText();
+                aiPlayerCount = Integer.parseInt(selectedNumber);
+                numPlayersSelected = true;
+                aiDropDown.setText(aiPlayerCount + " AI Players");
+            }
+        });
+
+        // For two AI players
+        twoAiPlayer.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String selectedNumber = ((JMenuItem) e.getSource()).getText();
+                aiPlayerCount = Integer.parseInt(selectedNumber);
+                numPlayersSelected = true;
+                aiDropDown.setText(aiPlayerCount + " AI Players");
+            }
+        });
+
+
         playerRangePanel.setLayout(new FlowLayout());
         playerRangePanel.add(menuBar);
         playerRangePanel.add(startButton);
@@ -137,7 +192,7 @@ public class UnoGUI extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 if (numPlayersSelected) {
                     setupGUIComponents();
-                    initializePlayers(playerCount);
+                    initializePlayers(playerCount,aiPlayerCount);
                     startGame();
 
                     menuBar.setEnabled(false);
@@ -156,11 +211,16 @@ public class UnoGUI extends JFrame {
         });
     }
 
-    public void initializePlayers(int playerCount) {
+    public void initializePlayers(int playerCount, int AiPlayerCount) {
         players.clear();
+        aiPlayers.clear();
 
         for (int i = 0; i < playerCount; i++) {
             players.add(new Player("Player " + (i + 1)));
+        }
+
+        for (int i = 0; i < aiPlayerCount; i++) {
+            aiPlayers.add(new AIPlayer("AI Player " + (i + 1)));
         }
     }
     private List<Card> createFlippedDeck() {
@@ -181,14 +241,15 @@ public class UnoGUI extends JFrame {
 
     private void startGame() {
         nextPlayerButton.setEnabled(false);
-        initializePlayers(players.size());
+        initializePlayers(players.size(),aiPlayers.size());
 
         currentPlayer = players.get(0);
+        isHumanTurn = true;
         updateCurrentPlayerLabel();
 
         shuffleDeck(deck);
         shuffleDeck(flippedDeck);
-        currentDeck = deck;
+
         // Distribute initial cards to players
         for (Player player : players) {
             for (int i = 0; i < 7; i++) {  // Distribute 7 cards to each player
@@ -196,9 +257,24 @@ public class UnoGUI extends JFrame {
                 player.addToHand(drawnCard);
             }
         }
+        for (AIPlayer aiPlayer : aiPlayers) {
+            for (int i = 0; i < 7; i++) {  // Distribute 7 cards to each AI player
+                Card drawnCard = deck.remove(0);
+                aiPlayer.addToHand(drawnCard);
+            }
+        }
+
         // Set the top card on the discard pile
         topCard = currentDeck.remove(0);
         updateCardVisibility();
+
+        if (currentPlayer instanceof AIPlayer) {
+            playAITurn((AIPlayer) currentPlayer);
+            updateCurrentPlayerLabel();
+            displayPlayerHand();
+            updateCardVisibility();
+            displayTopCard();
+        }
     }
 
     private void moveToNextPlayer() {
@@ -240,8 +316,11 @@ public class UnoGUI extends JFrame {
             }
             skipAll = false;
             numDraws = 0;
+
+            isHumanTurn = currentPlayer != null;
         }
     }
+
 
     public void checkForWinner() {
         for (Player player : players) {
@@ -268,6 +347,43 @@ public class UnoGUI extends JFrame {
 
         // Start a new game or perform any other initialization steps
         startGame();
+    }
+    private void handleSpecialCards(Card topCard) {
+
+        if (topCard.getRank() == Card.Rank.WILD) {
+//            System.out.println("Special card detected: WILD");
+//
+//            // Prompt the user to choose a color using a GUI dialog
+//            char chosenColor = promptForColorGUI();
+//
+//            // Update the suit of the WILD card
+//            topCard.setSuit(chosenColor);
+
+            System.out.println("Top card after handling WILD: " + topCard);
+        } else if (topCard.getRank() == Card.Rank.DRAW2) {
+            System.out.println("Special card detected: DRAW2");
+
+            // Simulate the logic for DRAW2 cards (you might want to implement specific rules)
+            draw2Played = true;
+
+
+            // Additional logic for handling DRAW2 cards can be added here
+        } else if (topCard.getRank() == Card.Rank.DRAW4) {
+            System.out.println("Special card detected: DRAW4");
+            draw4Played = true;
+        } else if (topCard.getRank() == Card.Rank.FLIP) {
+            System.out.println("Special card detected: FLIP");
+
+        }else if (topCard.getRank() == Card.Rank.REVERSE) {
+            System.out.println("Special card detected: REVERSE");
+            reverse = !reverse;
+        } else if (topCard.getRank() == Card.Rank.SKIP) {
+            System.out.println("Special card detected: SKIP");
+            skip = true;
+        }
+
+        // Set the updated top card after handling special cards
+        this.topCard = topCard;
     }
 
     private void handleCardButtonClick(Card selectedCard) {
@@ -329,6 +445,7 @@ public class UnoGUI extends JFrame {
             System.out.println("Invalid play. The selected card cannot be played.");
         }
     }
+
     private void changeToFlip() {
         //iterate through all the players' hands and the deck to flip the cards
         for(Player player : players) {
@@ -359,6 +476,7 @@ public class UnoGUI extends JFrame {
         deck = currentDeck;
         currentDeck = flippedDeck;
     }
+
     private void changeToNonFlip() {
         //iterate through all the players' hands and the deck to flip the cards
         for(Player player : players) {
@@ -389,6 +507,36 @@ public class UnoGUI extends JFrame {
         flippedDeck = currentDeck;
         currentDeck = deck;
     }
+    private void promptForFlipColorGUI() {
+        String[] options = {"PINK", "TEAL", "ORANGE", "PURPLE"};
+        int choice = JOptionPane.showOptionDialog(
+                this,
+                "Choose a color for the WILD card:",
+                "WILD Card Color",
+                JOptionPane.DEFAULT_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                options,
+                options[0]);
+
+        switch (choice) {
+            case 0:
+                topCard.setSuit(Card.Suit.PINK);
+                break;
+            case 1:
+                topCard.setSuit(Card.Suit.TEAL);
+                break;
+            case 2:
+                topCard.setSuit(Card.Suit.ORANGE);
+                break;
+            case 3:
+                topCard.setSuit(Card.Suit.PURPLE);
+                break;
+            default:
+                break;
+        }
+    }
+
     private void promptForColorGUI() {
         String[] options = {"RED", "YELLOW", "BLUE", "GREEN"};
         int choice = JOptionPane.showOptionDialog(
@@ -418,34 +566,48 @@ public class UnoGUI extends JFrame {
                 break;
         }
     }
-    private void promptForFlipColorGUI() {
-        String[] options = {"PINK", "TEAL", "ORANGE", "PURPLE"};
-        int choice = JOptionPane.showOptionDialog(
-                this,
-                "Choose a color for the WILD card:",
-                "WILD Card Color",
-                JOptionPane.DEFAULT_OPTION,
-                JOptionPane.QUESTION_MESSAGE,
-                null,
-                options,
-                options[0]);
 
-        switch (choice) {
-            case 0:
-                topCard.setSuit(Card.Suit.PINK);
-                break;
-            case 1:
-                topCard.setSuit(Card.Suit.TEAL);
-                break;
-            case 2:
-                topCard.setSuit(Card.Suit.ORANGE);
-                break;
-            case 3:
-                topCard.setSuit(Card.Suit.PURPLE);
-                break;
-            default:
-                break;
+    public void updatePlayersHands() {
+        for (Player player : players) {
+            List<Card> updatedHand = new ArrayList<>();
+
+            for (Card playerCard : player.getHand()) {
+                // Find the corresponding card in the current deck
+                Card matchingCard = findMatchingCard(playerCard);
+
+                if (matchingCard != null) {
+                    updatedHand.add(matchingCard);
+                } else {
+                    // Handle the case where the card is not found
+                    // You might want to keep it as is or replace it with a default card
+                    updatedHand.add(playerCard);
+                }
+            }
+
+            // Update the player's hand
+            player.setHand(updatedHand);
         }
+    }
+
+    private Card findMatchingCard(Card playerCard) {
+        // Iterate through the current deck to find a card with the same rank and suit
+        for (Card deckCard : currentDeck) {
+            if (deckCard.getRank() == playerCard.getRank() && deckCard.getSuit() == playerCard.getSuit()) {
+                return deckCard;
+            }
+        }
+        return null; // Card not found in the current deck
+    }
+
+    private void toggleDeck() {
+        if (currentDeck == deck) {
+            currentDeck = new ArrayList<>(flippedDeck);
+        } else {
+            currentDeck = new ArrayList<>(deck);
+        }
+
+        updatePlayersHands();
+        displayPlayerHand();
     }
 
     private void setupCardVisibility() {
@@ -611,20 +773,33 @@ public class UnoGUI extends JFrame {
         nextPlayerButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if(moveMade && !draw2Played){
-                    checkForWinner();
-                    drawCardButton.setEnabled(true);
-                    moveToNextPlayer();
-                    moveMade = false;
-                    cardPlayed = false;
+                if (moveMade && !draw2Played) {
+                    if (currentPlayerIndex < players.size() - 1) {
+                        moveToNextPlayer();
+                        moveMade = false;
+                        cardPlayed = false;
+                    } else {
+                        playAITurn(aiPlayer);
+                        updateCurrentPlayerLabel();
+                    }
+
+                    displayPlayerHand();
                     updateCardVisibility();
+                    displayTopCard();
                     nextPlayerButton.setEnabled(false);
-                } else if(moveMade && !draw4Played){
-                    checkForWinner();
-                    drawCardButton.setEnabled(true);
-                    moveToNextPlayer();
-                    moveMade = false;
-                    cardPlayed = false;
+                }
+
+                if (moveMade && !draw4Played) {
+                    if (currentPlayerIndex < players.size() - 1) {
+                        moveToNextPlayer();
+                        moveMade = false;
+                        cardPlayed = false;
+                    } else {
+                        playAITurn(aiPlayer);
+                        updateCurrentPlayerLabel();
+                    }
+
+                    displayPlayerHand();
                     updateCardVisibility();
                     nextPlayerButton.setEnabled(false);
                 }
@@ -648,7 +823,7 @@ public class UnoGUI extends JFrame {
                 draw4Played = false;
             }
         }
-        Card drawnCard = currentPlayer.drawCardFromDeck(currentDeck);
+        Card drawnCard = currentPlayer.drawCardFromDeck(deck);
         if (drawnCard != null) {
             updateCardVisibility();
             revalidate();
@@ -676,10 +851,111 @@ public class UnoGUI extends JFrame {
 
     public void updateCurrentPlayerLabel() {
         if (currentPlayer != null) {
-            currentPlayerLabel.setText("Current Player: " + currentPlayer.getName());
+            String playerType;
+
+
+            if (isHumanTurn) {
+                playerType = "Human";
+                currentPlayerLabel.setText("Current Player: " + currentPlayer.getName() +  " (" + playerType + ")");
+            }
+            else{
+                playerType = "AI";
+                currentPlayerLabel.setText("Current Player: " + currentPlayer.getName() +  "(" + playerType + ")");
+
+
+            }
+            currentPlayerLabel.setText("Current Player: " + " " + playerType + " "+ currentPlayerIndex);
         } else {
             currentPlayerLabel.setText("Current Player: None");
         }
+    }
+
+    /**
+     * Simulates a round of turns in the Uno game.
+     */
+    public void playRound() {
+        while (!isRoundOver()) {
+            // Iterate through all players
+            for (Player currentPlayer : players) {
+                // Check if the player is human or AI
+                if (currentPlayer.isHuman(false)) {
+                    // Human player's turn
+                    currentPlayer.takeTurn(deck, topCard);
+                } else {
+                    // AI player's turn
+                    playAITurn(aiPlayer);
+                }
+
+                // Check if the round is over
+                if (isRoundOver()) {
+                    break;
+                }
+            }
+        }
+    }
+
+
+
+    /**
+     * Simulates an AI player's turn in the Uno game.
+     *
+     * @param aiPlayer The AI player.
+     */
+    private void playAITurn(AIPlayer aiPlayer) {
+        isHumanTurn = false;
+        System.out.println(aiPlayer.getName() + "'s Turn.");
+        System.out.println("Current side: " + topCard.getSuit());
+
+        aiPlayer.displayHand();
+        System.out.println("Top card: " + topCard);
+        System.out.println("Score: " + aiPlayer.getPoints());
+
+        // You can implement the AI logic here to decide which card to play or to draw
+        Card selectedCard = aiPlayer.chooseCardToPlay(topCard);
+
+        if (selectedCard != null) {
+            // AI player plays a card
+            String message = aiPlayer.getName() + " plays: " + selectedCard;
+            JOptionPane.showMessageDialog(this, message);
+            aiPlayer.removeFromHand(aiPlayer.getHand().indexOf(selectedCard));
+
+            if (aiPlayer.getHand().size() == 1 || aiPlayer.getHand().isEmpty()) {
+                aiPlayer.addPoint();
+                String message2 = aiPlayer.getName() + " scores 1 point!";
+                JOptionPane.showMessageDialog(this, message2);
+            }
+
+            // Handle special card effects if needed
+            moveMade = true;
+        } else {
+            // AI player draws a card
+            Card drawnCard = aiPlayer.drawCardFromDeck(deck);
+            if (drawnCard != null) {
+                String message = aiPlayer.getName() + " draws a card: " + drawnCard;
+                JOptionPane.showMessageDialog(this, message);
+                // Handle special card effects if needed
+                moveMade = true;
+            }
+        }
+
+        // Enable the nextPlayerButton after the AI player's turn
+        nextPlayerButton.setEnabled(true);
+         // Move to the next player after AI's turn
+
+    }
+
+    /**
+     * Checks if the round is over by verifying if all players have taken their turn.
+     *
+     * @return True if the round is over, false otherwise.
+     */
+    public boolean isRoundOver() {
+        for (Player player : players) {
+            if (!player.hasTakenTurn()) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public List<Player> getPlayers() {
