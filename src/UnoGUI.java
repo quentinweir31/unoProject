@@ -836,6 +836,7 @@ public class UnoGUI extends JFrame {
         loadButton = new JButton("Load Game");
         undoButton = new JButton(("Undo"));
         redoButton = new JButton(("Redo"));
+        restartButton = new JButton("Restart");
         nextPlayerButton.setEnabled(false);
 
         JPanel buttonPanel = new JPanel();
