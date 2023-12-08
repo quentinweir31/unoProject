@@ -33,6 +33,10 @@ public class UnoGUI extends JFrame {
     private boolean isHumanTurn;
     private JButton nextPlayerButton;
     private JButton drawCardButton;
+
+    private JButton saveButton;
+
+    private JButton loadButton;
     private Boolean cardPlayed = false;
     private Boolean draw2Played = false;
     private Boolean draw4Played = false;
@@ -750,12 +754,16 @@ public class UnoGUI extends JFrame {
         JButton viewStatusButton = new JButton("View Status");
         drawCardButton = new JButton("Draw Card");
         nextPlayerButton = new JButton("Next Player");
+        saveButton = new JButton("Save Game");
+        loadButton = new JButton("Load Game");
         nextPlayerButton.setEnabled(false);
 
         JPanel buttonPanel = new JPanel();
         buttonPanel.add(viewStatusButton);
         buttonPanel.add(drawCardButton);
         buttonPanel.add(nextPlayerButton);
+        buttonPanel.add(saveButton);
+        buttonPanel.add(loadButton);
 
 
         add(currentPlayerLabel, BorderLayout.SOUTH);
@@ -821,6 +829,43 @@ public class UnoGUI extends JFrame {
         });
 
         updateCurrentPlayerLabel();
+
+
+        saveButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String fileName = getData("Please Enter a filename to save this game as");
+                SaveLoad save = new SaveLoad(fileName,players, currentPlayer, deck, aiPlayers, flippedDeck, currentDeck, topCard, aiPlayer, playerCount, aiPlayerCount, numPlayersSelected, currentPlayerIndex);
+
+            }
+        });
+
+        loadButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String fileName = getData("Please Enter a filename retrive game frome");
+                SaveLoad oldGame = new SaveLoad(fileName);
+
+                players = oldGame.getPlayers();
+                currentPlayer = oldGame.getCurrentPlayer();
+                deck = oldGame.getDeck();
+                aiPlayers = oldGame.getAiPlayers();
+                flippedDeck =oldGame.getFlippedDeck();
+                currentDeck = oldGame.getCurrentDeck();
+                topCard = oldGame.getTopCard();
+                aiPlayer = oldGame.getAiPlayer();
+                playerCount = oldGame.getPlayerCount();
+                aiPlayerCount = oldGame.getAiPlayerCount();
+                numPlayersSelected = oldGame.getNumPlayersSelected();
+                currentPlayerIndex = oldGame.getCurrentPlayerIndex();
+
+                updateCurrentPlayerLabel();
+                displayPlayerHand();
+                updateCardVisibility();
+                displayTopCard();
+
+            }
+        });
     }
 
     public void drawCard() {
@@ -983,5 +1028,18 @@ public class UnoGUI extends JFrame {
                 new UnoGUI();
             }
         });
+    }
+
+    private String getData(String prompt){
+        String getword = "Medal";
+
+        JTextField workspace = new JTextField("");
+        workspace.setEditable(true);
+
+        JOptionPane.showMessageDialog(this, workspace,
+                prompt, JOptionPane.INFORMATION_MESSAGE);
+
+        getword = workspace.getText();
+        return getword.toLowerCase();
     }
 }

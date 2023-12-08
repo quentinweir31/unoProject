@@ -1,0 +1,65 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.Serializable;
+import java.net.URL;
+import java.util.*;
+import java.util.List;
+import javax.swing.JOptionPane;
+
+public class AIPlayer extends Player implements Serializable {
+    public AIPlayer(String name) {
+        super(name); // false indicates AI player
+    }
+
+    // Implementing a simple strategy for the AI player
+    public Card chooseCardToPlay(Card topCard) {
+        List<Card> legalMoves = getLegalMoves(topCard);
+
+        // Check for regular cards with the same color
+        for (Card card : legalMoves) {
+            if (card.matchesColor(topCard)) {
+                return card;
+            }
+        }
+
+        // Check for regular cards with the same number
+        for (Card card : legalMoves) {
+            if (card.matchesNumber(topCard)) {
+                return card;
+            }
+        }
+
+        // If no suitable cards, draw a card
+        return null;
+    }
+
+    private List<Card> getLegalMoves(Card topCard) {
+        // Implement logic to generate and evaluate legal moves based on game rules.
+        // For simplicity, let's assume any card with the same color or number is legal.
+        List<Card> legalMoves = new ArrayList<>();
+
+        for (Card card : getHand()) {
+            if (card.matchesColor(topCard) || card.matchesNumber(topCard)) {
+                legalMoves.add(card);
+            }
+        }
+
+        return legalMoves;
+    }
+
+    public static Card determineMove() {
+        // Your AI logic to determine the move, replace this with your own strategy
+        List<Card> legalMoves = new ArrayList<>() ;// You need to implement getLegalMoves()
+
+        // For simplicity, let's assume the AI always plays the first legal move
+        if (!legalMoves.isEmpty()) {
+            return legalMoves.get(0);
+        } else {
+            // If no legal moves, return null or a special card to indicate drawing
+            return null;
+        }
+    }
+
+}

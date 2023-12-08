@@ -1,3 +1,4 @@
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -8,7 +9,7 @@ import java.util.Collections;
 /**
  * Represents a player in the Uno game.
  */
-public class Player {
+public class Player implements Serializable {
     private String name;
     private List<Card> hand;
     private boolean isHuman;

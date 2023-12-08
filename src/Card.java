@@ -1,11 +1,17 @@
+import java.io.Serializable;
+
 /**
  * Represents a playing card in the Uno game.
  */
 
-public class Card {
+public class Card implements Serializable {
 
 
     private static Rank color;
+
+    public boolean isSpecial() {
+        return true;
+    }
 
     /**
      * Enumeration of card ranks.
