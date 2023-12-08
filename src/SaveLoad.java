@@ -5,21 +5,19 @@ public class SaveLoad implements Serializable {
     private List<Player> players;
     private Player currentPlayer;
     private List<Card> deck;
-
     private List<AIPlayer> aiPlayers;
     private List<Card> flippedDeck;
-
     private List<Card> currentDeck;
     private Card topCard;
-
     private AIPlayer aiPlayer;
     private int playerCount = 0;
 
     private int aiPlayerCount = 0;
     private volatile Boolean numPlayersSelected = false;
     private int currentPlayerIndex = 0;
+
     public SaveLoad(String filename){
-        load(filename);
+
     }
     public SaveLoad(String filename,List<Player> players, Player currentPlayer, List<Card> deck, List<AIPlayer> aiPlayers, List<Card> flippedDeck, List<Card> currentDeck, Card topCard, AIPlayer aiPlayer, int playerCount, int aiPlayerCount, Boolean numPlayersSelected, int currentPlayerIndex ) {
         this.players = players;
@@ -35,10 +33,10 @@ public class SaveLoad implements Serializable {
         this.numPlayersSelected = numPlayersSelected;
         this.currentPlayerIndex = currentPlayerIndex;
 
-        save(filename);
+
     }
 
-    private void save(String filename){
+    public void save(String filename){
 
 
         try (FileOutputStream fileOut = new FileOutputStream(filename + ".txt");
@@ -52,7 +50,7 @@ public class SaveLoad implements Serializable {
         }
     }
 
-    private void load(String filename){
+    public void load(String filename){
 
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filename+".txt"))) {
             while (true) {
@@ -143,4 +141,6 @@ public class SaveLoad implements Serializable {
     public int getCurrentPlayerIndex() {
         return currentPlayerIndex;
     }
+
+
 }

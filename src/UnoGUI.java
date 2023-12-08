@@ -18,6 +18,10 @@ public class UnoGUI extends JFrame {
     private List<Card> currentDeck;
     private Card topCard;
 
+    private SaveLoad undo;
+    private SaveLoad redo;
+
+
     private AIPlayer aiPlayer;
     private int playerCount = 0;
 
@@ -37,6 +41,9 @@ public class UnoGUI extends JFrame {
     private JButton saveButton;
 
     private JButton loadButton;
+
+    private JButton undoButton;
+    private JButton redoButton;
     private Boolean cardPlayed = false;
     private Boolean draw2Played = false;
     private Boolean draw4Played = false;
@@ -121,6 +128,7 @@ public class UnoGUI extends JFrame {
         playerRangePanel.add(menuBar);
         playerRangePanel.add(startButton);
         playerRangePanel.add(closeButton);
+
 
         add(playerRangePanel, BorderLayout.WEST);
         setSize(400, 150);
@@ -237,6 +245,8 @@ public class UnoGUI extends JFrame {
 
 
     private void startGame() {
+        //undoButton.setEnabled(false);
+        //redoButton.setEnabled(false);
         nextPlayerButton.setEnabled(false);
         initializePlayers(players.size(),aiPlayers.size());
 
@@ -281,6 +291,8 @@ public class UnoGUI extends JFrame {
     }
 
     private void moveToNextPlayer() {
+
+
         if (currentPlayer!= null) {
             if(reverse && !skipAll) {
                 if(currentPlayerIndex > 0) {
@@ -320,8 +332,10 @@ public class UnoGUI extends JFrame {
             skipAll = false;
             numDraws = 0;
 
+
             isHumanTurn = currentPlayer != null;
         }
+
     }
 
 
@@ -403,40 +417,78 @@ public class UnoGUI extends JFrame {
 
     private void handleCardButtonClick(Card selectedCard) {
         //wild and wild draw4
+
+
         if ((selectedCard.getRank() == Card.Rank.WILD || selectedCard.getRank() == Card.Rank.DRAW4) && !flipMode) {
+
+            undo = new SaveLoad("previous",players, currentPlayer, deck, aiPlayers, flippedDeck, currentDeck, topCard, aiPlayer, playerCount, aiPlayerCount, numPlayersSelected, currentPlayerIndex);
+            //undoButton.setEnabled(true);
+            //System.out.println("Undo Triggered");
             if(selectedCard.getRank() == Card.Rank.DRAW4){
                 draw4Played = true;
             }
             topCard = selectedCard;
             promptForColorGUI();
+
         }
         //flipped wild
         if(selectedCard.getRank() == Card.Rank.WILD && flipMode) {
+
+            undo = new SaveLoad("previous",players, currentPlayer, deck, aiPlayers, flippedDeck, currentDeck, topCard, aiPlayer, playerCount, aiPlayerCount, numPlayersSelected, currentPlayerIndex);
+            //undoButton.setEnabled(true);
+            //System.out.println("Undo Triggered");
             topCard = selectedCard;
             promptForFlipColorGUI();
+
         }
         //skip_everyone
         if(selectedCard.getRank() == Card.Rank.SKIP_EVERYONE && currentPlayer.isValidPlay(selectedCard, topCard)) {
+
+            undo = new SaveLoad("previous",players, currentPlayer, deck, aiPlayers, flippedDeck, currentDeck, topCard, aiPlayer, playerCount, aiPlayerCount, numPlayersSelected, currentPlayerIndex);
+            //undoButton.setEnabled(true);
+            //System.out.println("Undo Triggered");
             topCard = selectedCard;
             skipAll = true;
+
         }
         //draw2
         if(selectedCard.getRank() == Card.Rank.DRAW2 && currentPlayer.isValidPlay(selectedCard, topCard)) {
+
+            undo = new SaveLoad("previous",players, currentPlayer, deck, aiPlayers, flippedDeck, currentDeck, topCard, aiPlayer, playerCount, aiPlayerCount, numPlayersSelected, currentPlayerIndex);
+            //undoButton.setEnabled(true);
+            // System.out.println("Undo Triggered");
             topCard = selectedCard;
             draw2Played = true;
+
         }
         //skip
         if(selectedCard.getRank() == Card.Rank.SKIP && currentPlayer.isValidPlay(selectedCard, topCard)) {
+
+
+            undo = new SaveLoad("previous",players, currentPlayer, deck, aiPlayers, flippedDeck, currentDeck, topCard, aiPlayer, playerCount, aiPlayerCount, numPlayersSelected, currentPlayerIndex);
+           // undoButton.setEnabled(true);
+            //System.out.println("Undo Triggered");
             topCard = selectedCard;
             skip = true;
+
         }
         //reverse
         if(selectedCard.getRank() == Card.Rank.REVERSE && currentPlayer.isValidPlay(selectedCard, topCard)) {
+
+            undo = new SaveLoad("previous",players, currentPlayer, deck, aiPlayers, flippedDeck, currentDeck, topCard, aiPlayer, playerCount, aiPlayerCount, numPlayersSelected, currentPlayerIndex);
+            //undoButton.setEnabled(true);
+            //System.out.println("Undo Triggered");
             topCard = selectedCard;
             reverse = !reverse;
+
+
         }
         //flip
         if(selectedCard.getRank() == Card.Rank.FLIP && currentPlayer.isValidPlay(selectedCard, topCard)) {
+
+            undo = new SaveLoad("previous",players, currentPlayer, deck, aiPlayers, flippedDeck, currentDeck, topCard, aiPlayer, playerCount, aiPlayerCount, numPlayersSelected, currentPlayerIndex);
+            //undoButton.setEnabled(true);
+            // System.out.println("Undo Triggered");
             topCard = selectedCard;
             flipMode = !flipMode;
             if(flipMode) {
@@ -444,17 +496,26 @@ public class UnoGUI extends JFrame {
             } else {
                 changeToNonFlip();
             }
+
         }
         //numbered
         if (currentPlayer.isValidPlay(selectedCard, topCard)) {
+
+            undo = new SaveLoad("previous",players, currentPlayer, deck, aiPlayers, flippedDeck, currentDeck, topCard, aiPlayer, playerCount, aiPlayerCount, numPlayersSelected, currentPlayerIndex);
+            //undoButton.setEnabled(true);
+            //System.out.println("Undo Triggered");
             topCard = selectedCard;
             currentPlayer.removeFromHand(currentPlayer.getHand().indexOf(selectedCard));
             moveMade = true;
             cardPlayed = true;
+
+
             drawCardButton.setEnabled(false);
             nextPlayerButton.setEnabled(true);
             displayTopCard();
             displayPlayerHand();
+
+
 
         } else {
             System.out.println("Invalid play. The selected card cannot be played.");
@@ -676,6 +737,7 @@ public class UnoGUI extends JFrame {
             Dimension buttonSize = new Dimension(100,150); // Adjust the size as needed
             if(cardPlayed || draw2Played || draw4Played) {
                 cardButton.setEnabled(false);
+
             }
             cardButton.setPreferredSize(buttonSize);
             centerPanel.add(cardButton);
@@ -685,9 +747,16 @@ public class UnoGUI extends JFrame {
             cardButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
+
                     handleCardButtonClick(card);
+                    undoButton.setEnabled(false);
+                    redoButton.setEnabled(false);
+
                 }
+
             });
+            undoButton.setEnabled(true);
+            redoButton.setEnabled(true);
         }
 
         revalidate();
@@ -705,6 +774,7 @@ public class UnoGUI extends JFrame {
             // Create a JPanel for the top card image
             JPanel topImagePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
             JButton topCardButton = new JButton();
+
 
             // Get the filename of the image for the top card
             String topCardImageName = topCard.getImageFilename();
@@ -756,6 +826,8 @@ public class UnoGUI extends JFrame {
         nextPlayerButton = new JButton("Next Player");
         saveButton = new JButton("Save Game");
         loadButton = new JButton("Load Game");
+        undoButton = new JButton(("Undo"));
+        redoButton = new JButton(("Redo"));
         nextPlayerButton.setEnabled(false);
 
         JPanel buttonPanel = new JPanel();
@@ -764,6 +836,8 @@ public class UnoGUI extends JFrame {
         buttonPanel.add(nextPlayerButton);
         buttonPanel.add(saveButton);
         buttonPanel.add(loadButton);
+        buttonPanel.add(undoButton);
+        buttonPanel.add(redoButton);
 
 
         add(currentPlayerLabel, BorderLayout.SOUTH);
@@ -836,7 +910,7 @@ public class UnoGUI extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 String fileName = getData("Please Enter a filename to save this game as");
                 SaveLoad save = new SaveLoad(fileName,players, currentPlayer, deck, aiPlayers, flippedDeck, currentDeck, topCard, aiPlayer, playerCount, aiPlayerCount, numPlayersSelected, currentPlayerIndex);
-
+                save.save(fileName);
             }
         });
 
@@ -845,6 +919,7 @@ public class UnoGUI extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 String fileName = getData("Please Enter a filename retrive game frome");
                 SaveLoad oldGame = new SaveLoad(fileName);
+                oldGame.load(fileName);
 
                 players = oldGame.getPlayers();
                 currentPlayer = oldGame.getCurrentPlayer();
@@ -863,6 +938,70 @@ public class UnoGUI extends JFrame {
                 displayPlayerHand();
                 updateCardVisibility();
                 displayTopCard();
+
+            }
+        });
+
+        undoButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                redo = new SaveLoad("forthcoming",players, currentPlayer, deck, aiPlayers, flippedDeck, currentDeck, topCard, aiPlayer, playerCount, aiPlayerCount, numPlayersSelected, currentPlayerIndex);
+                System.out.println("Redo Triggered");
+
+
+                players = undo.getPlayers();
+                currentPlayer = undo.getCurrentPlayer();
+                currentPlayer.addToHand(topCard);
+                deck = undo.getDeck();
+                aiPlayers = undo.getAiPlayers();
+                flippedDeck = undo.getFlippedDeck();
+                currentDeck = undo.getCurrentDeck();
+                topCard = undo.getTopCard();
+                aiPlayer = undo.getAiPlayer();
+                playerCount = undo.getPlayerCount();
+                aiPlayerCount = undo.getAiPlayerCount();
+                numPlayersSelected = undo.getNumPlayersSelected();
+                currentPlayerIndex = undo.getCurrentPlayerIndex();
+
+                //undoButton.setEnabled(false);
+                //redoButton.setEnabled(true);
+                updateCurrentPlayerLabel();
+                displayPlayerHand();
+                updateCardVisibility();
+                displayTopCard();
+
+            }
+        });
+
+        redoButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                undo = new SaveLoad("previous",players, currentPlayer, deck, aiPlayers, flippedDeck, currentDeck, topCard, aiPlayer, playerCount, aiPlayerCount, numPlayersSelected, currentPlayerIndex);
+                System.out.println("UndoTriggered");
+
+                players = redo.getPlayers();
+                currentPlayer = redo.getCurrentPlayer();
+                currentPlayer.addToHand(topCard);
+                deck = redo.getDeck();
+                aiPlayers = redo.getAiPlayers();
+                flippedDeck = redo.getFlippedDeck();
+                currentDeck = redo.getCurrentDeck();
+                topCard = redo.getTopCard();
+                aiPlayer = redo.getAiPlayer();
+                playerCount = redo.getPlayerCount();
+                aiPlayerCount = redo.getAiPlayerCount();
+                numPlayersSelected = redo.getNumPlayersSelected();
+                currentPlayerIndex = redo.getCurrentPlayerIndex();
+
+                //undoButton.setEnabled(true);
+                //redoButton.setEnabled(false);
+                updateCurrentPlayerLabel();
+                displayPlayerHand();
+                updateCardVisibility();
+                displayTopCard();
+
 
             }
         });
