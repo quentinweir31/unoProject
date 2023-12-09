@@ -947,27 +947,28 @@ public class UnoGUI extends JFrame {
         loadButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String fileName = getData("Please Enter a filename retrive game frome");
-                SaveLoad oldGame = new SaveLoad(fileName);
-                oldGame.load(fileName);
+                // String fileName = getData("Please Enter a filename retrive game frome");
+                // SaveLoad oldGame = new SaveLoad(fileName);
+                // oldGame.load(fileName);
 
-                players = oldGame.getPlayers();
-                currentPlayer = oldGame.getCurrentPlayer();
-                deck = oldGame.getDeck();
-                aiPlayers = oldGame.getAiPlayers();
-                flippedDeck =oldGame.getFlippedDeck();
-                currentDeck = oldGame.getCurrentDeck();
-                topCard = oldGame.getTopCard();
-                aiPlayer = oldGame.getAiPlayer();
-                playerCount = oldGame.getPlayerCount();
-                aiPlayerCount = oldGame.getAiPlayerCount();
-                numPlayersSelected = oldGame.getNumPlayersSelected();
-                currentPlayerIndex = oldGame.getCurrentPlayerIndex();
+                // players = oldGame.getPlayers();
+                // currentPlayer = oldGame.getCurrentPlayer();
+                // deck = oldGame.getDeck();
+                // aiPlayers = oldGame.getAiPlayers();
+                // flippedDeck =oldGame.getFlippedDeck();
+                // currentDeck = oldGame.getCurrentDeck();
+                // topCard = oldGame.getTopCard();
+                // aiPlayer = oldGame.getAiPlayer();
+                // playerCount = oldGame.getPlayerCount();
+                // aiPlayerCount = oldGame.getAiPlayerCount();
+                // numPlayersSelected = oldGame.getNumPlayersSelected();
+                // currentPlayerIndex = oldGame.getCurrentPlayerIndex();
 
-                updateCurrentPlayerLabel();
-                displayPlayerHand();
-                updateCardVisibility();
-                displayTopCard();
+                // updateCurrentPlayerLabel();
+                // displayPlayerHand();
+                // updateCardVisibility();
+                // displayTopCard();
+                restartGame();
 
             }
         });
