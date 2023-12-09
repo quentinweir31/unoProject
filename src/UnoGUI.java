@@ -400,26 +400,46 @@ public class UnoGUI extends JFrame {
                     }
                     winnerMessage += "\n" + gamer.getName() + " has score " + score.toString();
                 }
-                JOptionPane.showMessageDialog(this, winnerMessage);
-                System.out.println(player.getName() + " wins the game!");
-                restartGame();
+                Object[] options = {"OK", "Restart Game"};
+                int result = JOptionPane.showOptionDialog(
+                        this,
+                        winnerMessage,
+                        "Game Over",
+                        JOptionPane.DEFAULT_OPTION,
+                        JOptionPane.INFORMATION_MESSAGE,
+                        null,
+                        options,
+                        options[0]
+                );
+
+                if (result == 0) {
+                    System.exit(0);
+                } else if (result == 1) {
+                    restartGame();
+                }
             }
         }
     }
 
     public void restartGame() {
-        // Perform any necessary actions to reset the game state
-        // For example, reshuffle the deck, reset scores, etc.
 
-        // Clear hands of all players
         for (Player player : players) {
             player.getHand().clear();
         }
+        moveMade = false;
+        cardPlayed = false;
+        draw2Played = false;
+        draw4Played = false;
+        skipAll = false;
+        flipMode = false;
+        numDraws = 0;
+        reverse = false;
+        skip = false;
+        drawCardButton.setEnabled(true);
+        currentPlayerIndex = 0;
+        flippedDeck = createDeck();
+        deck = createDeck();
 
-        // Reset other game-related variables
-        // ...
-
-        // Start a new game or perform any other initialization steps
         startGame();
     }
 
