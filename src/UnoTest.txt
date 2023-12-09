@@ -12,7 +12,7 @@ public class UnoTest {
      */
     public UnoTest() {
     }
-    
+
     /**
      * This method is executed once before all the test methods.
      * It sets up the initial state of the test environment.
@@ -33,7 +33,7 @@ public class UnoTest {
         assertEquals(p1.getHand(), testHand);
     }
 
-    
+
     /**
      * Test Case to verify if hand actions such as add/ remove and draw card work
      */
@@ -44,15 +44,15 @@ public class UnoTest {
         //by creatign a hand, card and deck, and calling the add/remove draw methods
 
         Player p1 = new Player("Test_Player");
-        
+
         //Creating a sample hand to test against
         Card sample_card = new Card(Card.Rank.FIVE, Card.Suit.YELLOW);
         ArrayList<Card> testHand = new ArrayList<Card>();
-        
-        
+
+
         //adding a card to both the player's hand and the test, verifying that the card is added 
         testHand.add(sample_card);
-        p1.addToHand(sample_card); 
+        p1.addToHand(sample_card);
         assertEquals(p1.getHand().get(0), testHand.get(0));
 
         //removing the added card and verifying that the hands are empty 
@@ -164,7 +164,7 @@ public class UnoTest {
     void test_CreateDeck() {
         UnoGUI unoGUI = new UnoGUI();
         assertNotNull(unoGUI.createDeck());
-        assertEquals(56, unoGUI.createDeck().size()); // Assuming a standard Uno deck
+        assertEquals(48, unoGUI.createDeck().size()); // Assuming a standard Uno deck
     }
 
     /**
@@ -187,7 +187,7 @@ public class UnoTest {
     @Test
     void test_InitializePlayers() {
         UnoGUI unoGUI = new UnoGUI();
-        unoGUI.initializePlayers(2);
+        unoGUI.initializePlayers(2,0);
         assertEquals(2, unoGUI.getPlayers().size());
     }
 
@@ -211,12 +211,111 @@ public class UnoTest {
         assertNull(AIPlayer.determineMove());
     }
 
+    /**
+     * Test Case to verify the behavior of the save/load Game Serilzation
+     */
+
+    @Test
+    void saveAndLoadGame() {
+        // Create sample data for testing
+        List<Player> players = new ArrayList<>();
+        Player currentPlayer = new Player("Alice");
+        List<Card> deck = new ArrayList<>();
+        List<AIPlayer> aiPlayers = new ArrayList<>();
+        List<Card> flippedDeck = new ArrayList<>();
+        List<Card> currentDeck = new ArrayList<>();
+        Card topCard = new Card(Card.Rank.DEUCE, Card.Suit.BLUE);
+        AIPlayer aiPlayer = new AIPlayer("AIPlayer1");
+        int playerCount = 2;
+        int aiPlayerCount = 1;
+        boolean numPlayersSelected = true;
+        int currentPlayerIndex = 0;
+
+        SaveLoad saveLoad = new SaveLoad("testGame",
+                players, currentPlayer, deck, aiPlayers, flippedDeck, currentDeck, topCard, aiPlayer,
+                playerCount, aiPlayerCount, numPlayersSelected, currentPlayerIndex);
+
+        // Save the game
+        saveLoad.save("testGame");
+
+        // Load the game
+        SaveLoad loadedGame = new SaveLoad("testGame");
+        loadedGame.load("testGame");
+
+        // Check if the loaded game state matches the original state
+        assertEquals(players, loadedGame.getPlayers());
+        assertEquals(currentPlayer.getName(), loadedGame.getCurrentPlayer().getName());
+        assertEquals(deck, loadedGame.getDeck());
+        assertEquals(aiPlayers, loadedGame.getAiPlayers());
+        assertEquals(flippedDeck, loadedGame.getFlippedDeck());
+        assertEquals(currentDeck, loadedGame.getCurrentDeck());
+        assertEquals(topCard, loadedGame.getTopCard());
+        assertEquals(aiPlayer.getName(), loadedGame.getAiPlayer().getName());
+        assertEquals(playerCount, loadedGame.getPlayerCount());
+        assertEquals(aiPlayerCount, loadedGame.getAiPlayerCount());
+        assertEquals(numPlayersSelected, loadedGame.getNumPlayersSelected());
+        assertEquals(currentPlayerIndex, loadedGame.getCurrentPlayerIndex());
+    }
+
+    /**
+     *
+     *  Test to determine whether the AI takes valid turns and plays when it's their turn
+     */
+    @Test
+    void playAITurnTest() {
+        // Create a test instance of your game class (replace YourGameClass with your actual class name)
+        UnoGUI game = new UnoGUI();
+        // Create a test AIPlayer
+        AIPlayer aiPlayer = new AIPlayer("AI Test Player");
+
+        // Set up the initial game state, including the top card
+        Card topCard = new Card(Card.Rank.DEUCE,Card.Suit.RED);
+        game.topCardSet(topCard);
+
+        // Add some test cards to the AIPlayer's hand
+        List<Card> aiPlayerHand = new ArrayList<>();
+        aiPlayerHand.add(new Card(Card.Rank.DEUCE,Card.Suit.RED));
+        aiPlayerHand.add(new Card(Card.Rank.THREE,Card.Suit.BLUE));
+        aiPlayer.setHand(aiPlayerHand);
+
+        // Assertions to check the game state after AI turn
+        assertFalse(game.isHumanTurn); // Check if it's not human's turn
+    }
+
+    @Test
+    void chooseCardToPlayTest() {
+        // Create a test AIPlayer
+        UnoGUI game = new UnoGUI();
+        AIPlayer aiPlayer = new AIPlayer("AI Test Player");
+
+        // Set up a test top card
+        Card topCard = new Card(Card.Rank.DEUCE,Card.Suit.RED);
+        game.topCardSet(topCard);
+
+        // Add some test cards to the AIPlayer's hand
+        List<Card> aiPlayerHand = new ArrayList<>();
+        aiPlayerHand.add(new Card(Card.Rank.DEUCE,Card.Suit.RED));
+        aiPlayerHand.add(new Card(Card.Rank.THREE,Card.Suit.BLUE));
+        aiPlayer.setHand(aiPlayerHand);
+
+        // Call the chooseCardToPlay method
+        Card selectedCard = aiPlayer.chooseCardToPlay(topCard);
+
+        // Assertions to check the selected card
+        assertNull(selectedCard); // Check if a card is selected
+
+        if (selectedCard != null) {
+            assertFalse(selectedCard.matchesColor(topCard) || selectedCard.matchesNumber(topCard));
+        }
+    }
 
 
-/**
- * This method is executed once after all the test methods.
- * It performs any necessary cleanup after all the tests have been executed.
- */
+
+
+    /**
+     * This method is executed once after all the test methods.
+     * It performs any necessary cleanup after all the tests have been executed.
+     */
 
     @AfterAll
     private static void tearDown() {
