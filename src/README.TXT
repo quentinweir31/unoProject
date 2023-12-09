@@ -53,8 +53,17 @@ Replay capability.
 Save and load functionality.
 
 -----------------------How new functionalities were implemented--------------------
-Undo functionality:
-Redo functionality:
-Save and load functionaity:
+Undo functionality: we implemented an undo button in the GUI (undoButton),
+allowing players to revert the game state to the previous turn. The undo() method in the
+UnoGUI class manages this functionality, utilizing the SaveLoad class to store and retrieve multiple game
+states.
+
+Redo functionality: this was implemented to act just like the previous functionality of being able to play a card.
+once the undo button is pressed then the player can redo their move.
+
+Save and load functionaity: Using serialization of the game's current state,
+enabling players to save and load their progress. The serialized data includes crucial information such as
+player details, deck states, AI player configurations, flipped and current decks, top card, player counts,
+and game-specific flags
 
 
