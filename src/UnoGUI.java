@@ -36,7 +36,7 @@ public class UnoGUI extends JFrame {
     private JLabel currentPlayerLabel;
     private Boolean moveMade = false;
 
-    private boolean isHumanTurn;
+    public boolean isHumanTurn;
     private JButton nextPlayerButton;
     private JButton drawCardButton;
 
@@ -78,7 +78,9 @@ public class UnoGUI extends JFrame {
         setLocationRelativeTo(null);
         setVisible(true);
     }
-
+    public Card topCardSet(Card topCard){
+        return this.topCard = topCard;
+    }
     public List<Card> createDeck() {
         List<Card> deck = new ArrayList<>();
 
@@ -494,7 +496,7 @@ public class UnoGUI extends JFrame {
 
 
             undo = new SaveLoad("previous",players, currentPlayer, deck, aiPlayers, flippedDeck, currentDeck, topCard, aiPlayer, playerCount, aiPlayerCount, numPlayersSelected, currentPlayerIndex);
-           undoButton.setEnabled(true);
+            undoButton.setEnabled(true);
             //System.out.println("Undo Triggered");
             topCard = selectedCard;
             skip = true;
@@ -947,28 +949,27 @@ public class UnoGUI extends JFrame {
         loadButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // String fileName = getData("Please Enter a filename retrive game frome");
-                // SaveLoad oldGame = new SaveLoad(fileName);
-                // oldGame.load(fileName);
+                String fileName = getData("Please Enter a filename retrive game frome");
+                SaveLoad oldGame = new SaveLoad(fileName);
+                oldGame.load(fileName);
 
-                // players = oldGame.getPlayers();
-                // currentPlayer = oldGame.getCurrentPlayer();
-                // deck = oldGame.getDeck();
-                // aiPlayers = oldGame.getAiPlayers();
-                // flippedDeck =oldGame.getFlippedDeck();
-                // currentDeck = oldGame.getCurrentDeck();
-                // topCard = oldGame.getTopCard();
-                // aiPlayer = oldGame.getAiPlayer();
-                // playerCount = oldGame.getPlayerCount();
-                // aiPlayerCount = oldGame.getAiPlayerCount();
-                // numPlayersSelected = oldGame.getNumPlayersSelected();
-                // currentPlayerIndex = oldGame.getCurrentPlayerIndex();
+                players = oldGame.getPlayers();
+                currentPlayer = oldGame.getCurrentPlayer();
+                deck = oldGame.getDeck();
+                aiPlayers = oldGame.getAiPlayers();
+                flippedDeck =oldGame.getFlippedDeck();
+                currentDeck = oldGame.getCurrentDeck();
+                topCard = oldGame.getTopCard();
+                aiPlayer = oldGame.getAiPlayer();
+                playerCount = oldGame.getPlayerCount();
+                aiPlayerCount = oldGame.getAiPlayerCount();
+                numPlayersSelected = oldGame.getNumPlayersSelected();
+                currentPlayerIndex = oldGame.getCurrentPlayerIndex();
 
-                // updateCurrentPlayerLabel();
-                // displayPlayerHand();
-                // updateCardVisibility();
-                // displayTopCard();
-                restartGame();
+                updateCurrentPlayerLabel();
+                displayPlayerHand();
+                updateCardVisibility();
+                displayTopCard();
 
             }
         });
@@ -977,29 +978,30 @@ public class UnoGUI extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
 
-                System.out.println("Restarting!");
-
-
-                players = initialGameState.getPlayers();
-                currentPlayer = initialGameState.getCurrentPlayer();
-
-                deck = initialGameState.getDeck();
-                aiPlayers = initialGameState.getAiPlayers();
-                flippedDeck = initialGameState.getFlippedDeck();
-                currentDeck = initialGameState.getCurrentDeck();
-                topCard = initialGameState.getTopCard();
-                aiPlayer = initialGameState.getAiPlayer();
-                playerCount = initialGameState.getPlayerCount();
-                aiPlayerCount = initialGameState.getAiPlayerCount();
-                numPlayersSelected = initialGameState.getNumPlayersSelected();
-                currentPlayerIndex = initialGameState.getCurrentPlayerIndex();
-
-               restartButton.setEnabled(false);
-
-                updateCurrentPlayerLabel();
-                displayPlayerHand();
-                updateCardVisibility();
-                displayTopCard();
+//                System.out.println("Restarting!");
+//
+//
+//                players = initialGameState.getPlayers();
+//                currentPlayer = initialGameState.getCurrentPlayer();
+//
+//                deck = initialGameState.getDeck();
+//                aiPlayers = initialGameState.getAiPlayers();
+//                flippedDeck = initialGameState.getFlippedDeck();
+//                currentDeck = initialGameState.getCurrentDeck();
+//                topCard = initialGameState.getTopCard();
+//                aiPlayer = initialGameState.getAiPlayer();
+//                playerCount = initialGameState.getPlayerCount();
+//                aiPlayerCount = initialGameState.getAiPlayerCount();
+//                numPlayersSelected = initialGameState.getNumPlayersSelected();
+//                currentPlayerIndex = initialGameState.getCurrentPlayerIndex();
+//
+//                restartButton.setEnabled(false);
+//
+//                updateCurrentPlayerLabel();
+//                displayPlayerHand();
+//                updateCardVisibility();
+//                displayTopCard();
+                restartGame();
 
             }
         });
